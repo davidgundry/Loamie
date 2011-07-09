@@ -4,10 +4,8 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-
-import uk.co.thunderbadger.mud.net.SocketThread;
-import uk.co.thunderbadger.mud.world.npc.Dialogue;
 
 /**
  * Represents a character in the game. Subclasses may represent player characters or
@@ -34,9 +32,10 @@ public class GameCharacter implements Serializable, WorldObject
 	private List<WorldObject> contents = new ArrayList<WorldObject>();
 	
 	/**
-	 * Create a new character with the given name.
+	 * Create a new character with the given name and description
 	 * 
 	 * @param name
+	 * @param description
 	 */
 	public GameCharacter(String name, String description)
 	{
@@ -47,11 +46,26 @@ public class GameCharacter implements Serializable, WorldObject
 		this.listener = null;
 	}
 	
+	public GameCharacter()
+	{
+		
+	}
+	
 	public GameCharacter(String name, String description, int hitPoints)
 	{
 		this.name = name;
 		this.description = description;
 		this.hitPoints = hitPoints;
+		this.xp = 0;
+		this.listener = null;
+	}
+	
+	public GameCharacter(String name, String description, List<String> synonyms)
+	{
+		this.name = name;
+		this.description = description;
+		this.synonyms = synonyms;
+		this.hitPoints = 10;
 		this.xp = 0;
 		this.listener = null;
 	}
@@ -112,13 +126,18 @@ public class GameCharacter implements Serializable, WorldObject
 	 * 
 	 * @param location
 	 */
-	public void moveTo(WorldObject location)
+	public boolean moveTo(WorldObject location)
 	{
-		if (this.location != null)
-			this.location.objectExited(this);
-		this.lastRoom = this.location;
-		this.location = (Room) location;
-		location.objectEntered(this);
+		if (location != null)
+		{
+			if (this.location != null)
+				this.location.objectExited(this);
+			this.lastRoom = this.location;
+			this.location = (Room) location;
+			location.objectEntered(this);
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -286,6 +305,37 @@ public class GameCharacter implements Serializable, WorldObject
 		// TODO Auto-generated method stub
 		
 	}
+	
+	void commandHeal(String command, GameCharacter actor){
+		StringTokenizer st = new StringTokenizer(command);
+		String valueString;
+		try {
+			valueString = st.nextToken();
+		} catch (NoSuchElementException ex) {
+			this.receiveMessage("Wrong syntax!");
+			return;	
+		}
+		int value;
+		try {
+			value = Integer.parseInt(valueString);
+		} catch (NumberFormatException ex) {
+			this.receiveMessage("That is not a valid amount");
+			return;
+		}
+		String targetName = "";
+		try {
+			targetName = st.nextToken();
+		} catch (NoSuchElementException ex) {
+			this.location.heal(value);
+		}
+		
+		if (targetName.equals("room"))
+			this.getLocation().heal(value);
+		else if (targetName.equals("actor"))
+			actor.heal(value);
+		else
+			this.receiveMessage("What do you want me to heal?");
 
+	}
 	    
 }

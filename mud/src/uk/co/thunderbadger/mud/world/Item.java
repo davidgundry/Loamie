@@ -1,12 +1,7 @@
 package uk.co.thunderbadger.mud.world;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -15,7 +10,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import uk.co.thunderbadger.mud.ScriptInterpreter;
-import uk.co.thunderbadger.mud.net.SocketThread;
 
 /**
  * Represents an item. Things which are not rooms, doors or characters. Things which can be picked up and dropped.
@@ -105,11 +99,16 @@ public class Item implements Serializable, WorldObject {
 		return 1;
 	}
 
-	public void moveTo(WorldObject location) {
+	public boolean moveTo(WorldObject location) {
 		if (location != null)
-			this.location.objectExited(this);
-		this.location = location;
-		location.objectEntered(this);
+		{
+			if (this.location != null)
+				this.location.objectExited(this);
+			this.location = location;
+			location.objectEntered(this);
+			return true;
+		}
+		return false;
 	}
 	
 	public void moveTo(Room location) {
@@ -120,6 +119,15 @@ public class Item implements Serializable, WorldObject {
 	}
 
 
+	/**
+	 * Called when the server does not immediately know what a verb does.
+	 * Items which are named after the verb are queried to see if they have
+	 * either a command script for that verb, or inbuilt code, in that order.
+	 * Thus 'pick up' can be overridden by using the same verb for a script.
+	 * 
+	 * @param text
+	 * @param actor
+	 */
 	public int interpretCommand(String text, GameCharacter actor) {
 		if (commands.containsKey(text)){
 			String[] todos = commands.get(text).replace("$_actor", actor.getName()).split("; ");
@@ -128,7 +136,7 @@ public class Item implements Serializable, WorldObject {
 			return 1;
 		}
 			
-		// These commands are global to all Items, unless they are overrided by using the same command in the Items commands Map, and getting it to do something different.
+		// These commands are global to all Items, unless they are overridden by using the same command in the Items commands Map, and getting it to do something different.
 		if (text.toLowerCase().equals("pick up") || text.toLowerCase().equals("get") || text.toLowerCase().equals("grab") || text.toLowerCase().equals("take")){
 			this.processCommand(text, actor);
 			return 1;
@@ -166,6 +174,7 @@ public class Item implements Serializable, WorldObject {
 	
 	/**
 	 * Calls when an object leaves this item. Removes it from the contents list.
+	 * 
 	 * @param object
 	 */
 	public void objectExited(WorldObject object)
@@ -197,6 +206,12 @@ public class Item implements Serializable, WorldObject {
 		
 	}
 
+	/**
+	 * Called when the world is being saved to XML. The item has to make an XML version
+	 * of itself and print it to the PrintStream
+	 * 
+	 * @param printStream
+	 */
 	public void saveStateToXML(PrintStream ps)
 	{
 		ps.println("		<item>");
@@ -216,9 +231,9 @@ public class Item implements Serializable, WorldObject {
 		if (this.commands != null)
 		{
 			Set<Entry<String,String>> set = commands.entrySet();
-		    Iterator i = set.iterator();
+		    Iterator<Entry<String,String>> i = set.iterator();
 		    while(i.hasNext()){
-				Map.Entry me = (Map.Entry)i.next();
+				Map.Entry<String,String> me = (Map.Entry<String,String>)i.next();
 				ps.println("			<command>");
 				ps.println("				<label>"+me.getKey()+"</label>");
 				ps.println("				<action>"+me.getValue()+"</action>");
@@ -228,6 +243,12 @@ public class Item implements Serializable, WorldObject {
 		ps.println("		</item>");
 	}
 
+	/**
+	 * This function is called with a room element, and needs to pick out all of the items
+	 * within the room element with all their variables.
+	 * 
+	 * @param firstRoomElement
+	 */
 	public List<Item> loadStateFromXML(Element firstRoomElement)
 	{
 		NodeList itemList = firstRoomElement.getElementsByTagName("item");

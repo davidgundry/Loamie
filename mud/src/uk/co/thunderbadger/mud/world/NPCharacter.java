@@ -1,24 +1,43 @@
 package uk.co.thunderbadger.mud.world;
 
-import java.io.Serializable;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import uk.co.thunderbadger.mud.ScriptInterpreter;
 import uk.co.thunderbadger.mud.world.npc.Dialogue;
 
+/**
+ * A Non-Player Character is an extension of a GameCharacter that gives the character dialogues, and
+ * in the future enable it to battle players.
+ * 
+ * @author David Gundry
+ */
 public class NPCharacter extends GameCharacter  {
 	
 	private String greeting = "";
 	private String farewell = "";
 	private String dismissal = "They have nothing to say to you.";
+	
 	private List<Dialogue> dialogues = new ArrayList<Dialogue>();
 	private Map<GameCharacter,List<Dialogue>> playerDialogues = new HashMap<GameCharacter,List<Dialogue>>();
 
+	/**
+	 * Creates an empty Non-Player Character. Variables required to use this NPC have not been set, so don't try
+	 * and add it to the world.
+	 */
+	public NPCharacter()
+	{
+		super();
+	}
+	
 	public NPCharacter(String name, String description) {
 		super(name, description);
 	}
@@ -30,6 +49,12 @@ public class NPCharacter extends GameCharacter  {
 	public NPCharacter(String name, String description, String dismissal) {
 		super(name, description);
 		this.dismissal = dismissal;
+	}
+	
+	public NPCharacter(String name, String description, List<String> synonyms, List<Dialogue> dialogues)
+	{
+		super(name, description, synonyms);
+		this.dialogues = dialogues;
 	}
 	
 	public NPCharacter(String name, String description, int hitPoints,  String dismissal) {
@@ -113,37 +138,97 @@ public class NPCharacter extends GameCharacter  {
 		return si.interpret(command, this, actor);
 	}
 	
-	void commandHeal(String command, GameCharacter actor){
-		StringTokenizer st = new StringTokenizer(command);
-		String valueString;
-		try {
-			valueString = st.nextToken();
-		} catch (NoSuchElementException ex) {
-			this.receiveMessage("Wrong syntax!");
-			return;	
-		}
-		int value;
-		try {
-			value = Integer.parseInt(valueString);
-		} catch (NumberFormatException ex) {
-			this.receiveMessage("That is not a valid amount");
-			return;
-		}
-		String targetName = "";
-		try {
-			targetName = st.nextToken();
-		} catch (NoSuchElementException ex) {
-			this.location.heal(value);
-		}
+	public void saveStateToXML(PrintStream ps) {
+		ps.println("<npc>");
+		ps.println("	<name>" + name + "</name>");
+		ps.println("	<description>" + description + "</description>");
+		if (this.getSynonyms() != null)
+			for (String syn: this.getSynonyms())
+			{
+				ps.println("			<synonym>"+syn+"</synonym>");
+			}
+		ps.println("	<hitpoints>" + hitPoints + "</hitpoints>");
+		ps.println("	<xp>" + xp + "</xp>");
+		if (lastRoom != null)
+			ps.println("	<lastRoom>" + lastRoom.getName() + "</lastRoom>");
+		ps.println("	<greeting> " + greeting + "</greeting>");
+		ps.println("	<farewell> " + farewell + "</farewell>");
+		ps.println("	<dismissal> " + dismissal + "</dismissal>");
 		
-		if (targetName.equals("room"))
-			this.getLocation().heal(value);
-		else if (targetName.equals("actor"))
-			actor.heal(value);
-		else
-			this.receiveMessage("What do you want me to heal?");
-
+		if (this.dialogues != null)
+		{
+		    Iterator<Dialogue> i = dialogues.iterator();
+		    while(i.hasNext())
+		    	i.next().saveStateToXML(ps);
+		}
+		ps.println("</npc>");
+		
 	}
 
+	public List<NPCharacter> loadStateFromXML(Element firstRoomElement)
+	{
+		NodeList npcList = firstRoomElement.getElementsByTagName("npc");
+        int totalItems = npcList.getLength();
+        System.out.println("Number of NPCs read: " + totalItems);
+        
+        List<NPCharacter> newNPCs = new ArrayList<NPCharacter>();
+        
+    	Element npcElement = (Element)npcList.item(0);
+    	if (npcElement != null)
+		{
+    	NodeList childItemList = npcElement.getChildNodes();
+    	
+    	for(int j=0; j<childItemList.getLength(); j++){
+    		if (npcList.item(j) != null)
+    		{
+        		Node firstNPCNode = npcList.item(j);
+	                if(firstNPCNode.getNodeType() == Node.ELEMENT_NODE){
+        		
+            		Element firstNPCElement = (Element)firstNPCNode;
+            		
+            		 //-------
+                    NodeList itemNameList = firstNPCElement.getElementsByTagName("name");
+                    Element itemNameElement = (Element)itemNameList.item(0);
+
+                    NodeList textItemNameList =  itemNameElement.getChildNodes();
+                    System.out.println("	NPC : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    String npcName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
+
+                    //-------
+                    NodeList itemDescList = firstNPCElement.getElementsByTagName("description");
+                    Element itemDescElement = (Element)itemDescList.item(0);
+
+                    NodeList textItemDescList =  itemDescElement.getChildNodes();
+                    System.out.println("	NPC : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    String npcDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
+                    
+                   
+                    //----
+                    NodeList synList = firstNPCElement.getElementsByTagName("synonym");
+		            int totalSyns = synList.getLength();
+		            System.out.println("Number of synonyms read: " + totalSyns);
+                    
+		            List<String> newSyns = new ArrayList<String>();
+		            
+                    for(int l=0; l<npcList.getLength(); l++){
+                    	if (synList.item(l) != null)
+                		{
+	                    	Element synElement = (Element)synList.item(l);
+	                    	NodeList childSynList = synElement.getChildNodes();
+	                   // 	System.out.println("	item : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
+		                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
+                		}
+                    }
+                        
+                    Dialogue tempDialogue = new Dialogue();
+	            	List<Dialogue> newDialogues = tempDialogue.loadStateFromXML(firstNPCElement);
+                    
+                    newNPCs.add(new NPCharacter(npcName,npcDesc,newSyns, newDialogues));
+	                }
+	        	}
+        	}
+        }
+		return newNPCs;
+	}
 	
 }

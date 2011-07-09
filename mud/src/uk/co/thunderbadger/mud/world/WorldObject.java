@@ -31,7 +31,13 @@ public interface WorldObject extends Serializable
 	 * Returns WorldObject type. 0 for GameCharacters, 1 for Items, 2 for Rooms and 3 for Doors.
 	 */
 	public int getType();
-	public void moveTo(WorldObject location);
+	
+	/**
+	 * Moves object to specified location. Returns true on success, false if for any reason the
+	 * object can't be moved there. (Eg. the location doesn'e exist)
+	 * @param location
+	 */
+	public boolean moveTo(WorldObject location);
 	public void objectExited(WorldObject object);
 	public void objectEntered(WorldObject object);
 

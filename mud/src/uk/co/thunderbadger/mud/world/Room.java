@@ -24,6 +24,15 @@ public class Room implements Serializable, WorldObject
 	private List<WorldObject> contents = new ArrayList<WorldObject>();
 	
 	/**
+	 * Creates a room without setting any of the variables. The program will probably break if you
+	 * try and add this room to the game world.
+	 */
+	public Room()
+	{
+		
+	}
+	
+	/**
 	 * Creates a new room with the given name and description.
 	 * 
 	 * @param name
@@ -33,11 +42,6 @@ public class Room implements Serializable, WorldObject
 	{
 		this.name = name;
 		this.description = description;
-	}
-	
-	public Room()
-	{
-		
 	}
 	
 	/**
@@ -154,8 +158,9 @@ public class Room implements Serializable, WorldObject
 	    return null;
 	}
 	
-	public void moveTo(WorldObject target)
+	public boolean moveTo(WorldObject target)
 	{
+		return false;
 	}
 	
 	public void ejectContents(Room target)
@@ -212,7 +217,7 @@ public class Room implements Serializable, WorldObject
 		}
 		for (WorldObject cont: this.contents)
 		{
-			if (cont.getType() == 1){
+			if ((cont.getType() == 0) || (cont.getType() == 1 )){
 				cont.saveStateToXML(ps);
 			}
 		}

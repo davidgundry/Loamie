@@ -12,6 +12,10 @@ import java.util.StringTokenizer;
 import uk.co.thunderbadger.mud.world.PlayerCharacter;
 import uk.co.thunderbadger.mud.world.Room;
 import uk.co.thunderbadger.mud.world.WorldObject;
+import uk.co.thunderbadger.mud.world.command.AdminCommandInterpreter;
+import uk.co.thunderbadger.mud.world.command.CommandInterpreter;
+import uk.co.thunderbadger.mud.world.command.PlayerCommandInterpreter;
+import uk.co.thunderbadger.mud.world.command.UnLoggedInCommandInterpreter;
 
 
 /**
@@ -26,7 +30,7 @@ public final class SocketThread extends Thread implements Serializable
 	
 	private transient BufferedReader in;
 	private transient PrintStream out;
-    private transient ServerThread server;
+    private transient ServerThread serverThread;
     private transient Socket socket;
     
     PlayerCharacter character;
@@ -43,7 +47,7 @@ public final class SocketThread extends Thread implements Serializable
     	super("NetThread");
     	
     	this.socket = socket;
-		this.server = server;
+		this.serverThread = server;
     }
     
     public PlayerCharacter getCharacter()
@@ -55,9 +59,9 @@ public final class SocketThread extends Thread implements Serializable
     {
     	return remoteIP;
     }
-    public ServerThread getServer()
+    public ServerThread getServerThread()
     {
-    	return server;
+    	return serverThread;
     }
     
     /**
@@ -68,7 +72,7 @@ public final class SocketThread extends Thread implements Serializable
 		if (character != null){
 			sendMessage("You are now being placed in Limbo. When you log back on you will be returned to your previous location.");
 			character.moveToByID(0);
-			sendMessage(server.game.getGoodbyeMessage());
+			sendMessage(serverThread.game.getWorld().getGoodbyeMessage());
 			character.playerDisconnected();
 		}
     	logMessage("Connection closed.");	
@@ -77,7 +81,7 @@ public final class SocketThread extends Thread implements Serializable
         try { in.close(); } catch (IOException e) { e.printStackTrace(); }
         try { socket.close(); } catch (IOException e) { e.printStackTrace(); }
         
-        server.threadDisconnected(this);
+        serverThread.threadDisconnected(this);
     }
     
     
@@ -88,7 +92,7 @@ public final class SocketThread extends Thread implements Serializable
 	 */
 	private void logError(Throwable error)
 	{		
-		server.logError(String.format("<%s %d> Error occurred:", remoteIP, getId()), error);
+		serverThread.logError(String.format("<%s %d> Error occurred:", remoteIP, getId()), error);
 	}
 	
 	
@@ -97,9 +101,9 @@ public final class SocketThread extends Thread implements Serializable
 	 * 
 	 * @param message  Message to log
 	 */
-	private void logMessage(String message)
+	public void logMessage(String message)
 	{
-		server.logMessage(String.format("<ID %d, address %s> %s", getId(), remoteIP, message));
+		serverThread.logMessage(String.format("<ID %d, address %s> %s", getId(), remoteIP, message));
 	}
 	
 	
@@ -112,154 +116,15 @@ public final class SocketThread extends Thread implements Serializable
 	{
 		logMessage("Command: " + command);				
 		
+		// Commands for logged-in players
 		if (character != null)
 		{
-			// Commands for logged-in players
-			
-			// Admin commands
-			
-			if (command.toLowerCase().startsWith("goto "))
-			{
-				int roomNo = 0;
-				try {
-					int value = Integer.parseInt(command.substring(5));
-					roomNo = value;
-				} catch (NumberFormatException value) {
-					sendMessage("That is not a valid room");
-					return;
-				}
-				character.moveToByID(roomNo);
+			//Admin Commands
+			if (new AdminCommandInterpreter().interpret(command, this))
 				return;
-			}
-			
-			if (command.toLowerCase().startsWith("create "))
-			{
-				character.create(command.substring(7));
+			//Player Commands
+			if (new PlayerCommandInterpreter().interpret(command, this))
 				return;
-			}
-			
-			if (command.toLowerCase().startsWith("edit "))
-			{
-				character.edit(command.substring(5));
-				return;
-			}
-			
-			if (command.toLowerCase().startsWith("delete "))
-			{
-				character.delete(command.substring(7));
-				return;
-			}
-			
-			if (command.toLowerCase().startsWith("eject "))
-			{
-				character.eject(command.substring(6));
-				return;
-			}
-			
-			if (command.toLowerCase().equals("users"))
-			{
-				character.userLookUp();
-				return;
-			}
-			
-			if (command.toLowerCase().equals("save"))
-			{
-				getServer().saveWorldState();
-				return;
-			}
-			
-			if (command.toLowerCase().equals("savexml"))
-			{
-				getServer().saveWorldStateToXML();
-				return;
-			}
-			
-			
-			
-			// Player commands
-			
-			if (command.toLowerCase().startsWith("say "))
-			{
-				character.say(command.substring(4));
-				return;
-			}
-			
-			if (command.toLowerCase().startsWith("shout "))
-			{
-				character.shout(command.substring(6));
-				return;
-			}
-
-			if (command.startsWith("*"))
-			{
-				character.rpAction(command.substring(1));
-				return;
-			}
-
-			if (command.startsWith("/"))
-			{
-				character.ownerlessRpAction(command.substring(1));
-				return;
-			}
-			
-			if (command.toLowerCase().equals("look") || command.toLowerCase().equals("look around"))
-			{
-				character.look();
-				return;
-			}
-			
-			if (command.toLowerCase().equals("door") || command.toLowerCase().equals("doors") || command.toLowerCase().equals("look doors") || command.toLowerCase().equals("look door") || command.toLowerCase().equals("look at door") || command.toLowerCase().equals("look at doors") || command.toLowerCase().equals("look at the door") || command.toLowerCase().equals("look at the doors"))
-			{
-				character.receiveMessage(character.getLocation().describeDoors());
-				return;
-			}
-			
-			if (command.toLowerCase().equals("use door") || command.toLowerCase().equals("use the door"))
-			{
-				if (character.getLocation().getDoors().size() == 1){
-					character.getLocation().getDoors().get(0).interpretCommand("use", character);
-				}
-				else
-					character.receiveMessage("Which door you mean?");
-				return;
-			}
-			
-			if (command.toLowerCase().startsWith("look at "))
-			{
-				character.objectLook(command.substring(8).toLowerCase());
-				return;
-			}
-			
-			if (command.toLowerCase().startsWith("look "))
-			{
-				character.objectLook(command.substring(5).toLowerCase());
-				return;
-			}
-
-			if (command.toLowerCase().equals("me"))
-			{
-				character.receiveMessage(character.getName() + "\n" + character.getDescription());
-				return;
-			}
-			
-			if (command.toLowerCase().equals("stat") || command.toLowerCase().equals("stats"))
-			{
-				character.receiveMessage(character.characterStats());
-				return;
-			}
-			
-			if (command.toLowerCase().equals("inven"))
-			{
-				character.receiveMessage(character.describeContents());
-
-				return;
-			}
-			
-			if (command.toLowerCase().equals("sheet") || command.toLowerCase().equals("character sheet") || command.toLowerCase().equals("character"))
-			{
-				character.receiveMessage(character.characterSheet());
-				return;
-			}
 
 			// If no luck, split it up and look for an object. When it finds one, see if that knows what the verb is.
 			int retval = 0;
@@ -292,45 +157,9 @@ public final class SocketThread extends Thread implements Serializable
 
 		} else {
 			
-			
 			// Commands for connections which have not logged in
-			
-			if (command.startsWith("login "))
-			{
-				for (Room room: server.game.getWorld().getRooms())
-				{
-					if (room.getContentsByName(command.substring(6)) != null){
-						character = (PlayerCharacter) room.getContentsByName(command.substring(6));
-						sendMessage("A character has been found by that name.");
-						if (character.getLocation() == server.game.getWorld().getRooms().get(0)){
-							character.moveTo(character.getLastRoom());
-							character.playerConnected(this);
-							return;
-						} else{
-							logMessage(character.getName() + " arrived in an unexpected location. Did the server not shut down properly?");
-							character.playerConnected(this);
-							return;
-						}
-					}	
-				}
-				
-				character = server.game.createPlayerCharacter(command.substring(6), "As yet completely undescribed and unremarkable.");
-				sendMessage("A new character has been created.");
-				character.playerConnected(this);
+			if (new UnLoggedInCommandInterpreter().interpret(command, this))
 				return;
-			}
-			
-			if (command.toLowerCase().equals("restore"))
-			{
-				sendMessage(getServer().restoreWorldState());
-				return;
-			}
-			
-			if (command.toLowerCase().equals("restorexml"))
-			{
-				sendMessage(getServer().restoreWorldStateFromXML());
-				return;
-			}
 
 		}
 		
@@ -341,8 +170,6 @@ public final class SocketThread extends Thread implements Serializable
 			disconnect();
 			return; 
 		}
-		
-		
 		if (command.equals("help"))
 		{
 			sendMessage("Console Commands:\nlogin [username]\nhelp\nquit\n");
@@ -352,7 +179,6 @@ public final class SocketThread extends Thread implements Serializable
 		}
 		
 		// If we got here, the command wasn't understood
-		
 		sendMessage("Huh?");
 	}
       
@@ -373,7 +199,8 @@ public final class SocketThread extends Thread implements Serializable
             remoteIP = socket.getInetAddress().getHostAddress();                      
             
             logMessage("Accepted connection.");
-            sendMessage(server.game.getWelcomeMessage());
+            sendMessage(serverThread.getGame().getWelcomeMessage());
+            sendMessage(serverThread.game.getWorld().getWelcomeMessage());
             
     		running = true;
     		
@@ -408,6 +235,16 @@ public final class SocketThread extends Thread implements Serializable
 		for(int i=0;i<lines.length;i++)
 			out.println("          " + lines[i]);
     }
+
+    /**
+     * Set the character object that is associated with this socket.
+     * 
+     * @param character
+     */
+	public void setCharacter(PlayerCharacter character) {
+		this.character = character;
+		
+	}
 }
 
 

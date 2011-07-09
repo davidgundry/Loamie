@@ -6,21 +6,34 @@ import java.util.StringTokenizer;
 import uk.co.thunderbadger.mud.world.GameCharacter;
 import uk.co.thunderbadger.mud.world.WorldObject;
 
+/**
+ * The script interpreter is the class that is called whenever a script is run,
+ * for example when an item with its own script is used. To run a script, create
+ * a script interpreter and then call interpret() on it, passing it the required
+ * parameters, including the script to run.
+ * 
+ * <h2>Commands that are recognised:</h2>
+ * <ul><li>heal [value] [room/holder/actor]</li>
+ * <li>message [string] (untagged)</li>
+ * <li>announce [string] (untagged)</li>
+ * <li>say [message] (same as command say)</li>
+ * <li>shout [message] (same as command shout)</li>
+ * <li>pick up (etc.) (moves caller to actor)</li>
+ * <li>drop (etc.) (moves caller to actor's location)</li>
+ * <li>delete self</li></ul>
+ *
+ * @author David Gundry
+ *
+ */
 public class ScriptInterpreter {
 
-	/* Commands that are recognised:
+	/**
+	 * Called with the command string, this figures out what the command means and does it.
 	 * 
-	 * heal [value] [room/holder/actor]
-	 * message [string] (untagged)
-	 * announce [string] (untagged)
-	 * say [message] (same as command say)
-	 * shout [message] (same as command shout)
-	 * pick up (etc.) (moves caller to actor)
-	 * drop (etc.) (moves caller to actor's location)
-	 * delete self
-	 * 
+	 * @parm command
+	 * @param caller
+	 * @param actor
 	 */
-	
 	public int interpret(String command, WorldObject caller, GameCharacter actor)
 	{
 		if (command.toLowerCase().startsWith("heal ")){
@@ -58,6 +71,13 @@ public class ScriptInterpreter {
 			return 0;
 	}
 	
+	/**
+	 * This interprets all commands starting with 'heal', and does them.
+	 * 
+	 * @param command
+	 * @param caller
+	 * @param actor
+	 */
 	void commandHeal(String command, WorldObject caller, GameCharacter actor){
 		StringTokenizer st = new StringTokenizer(command);
 		String valueString;

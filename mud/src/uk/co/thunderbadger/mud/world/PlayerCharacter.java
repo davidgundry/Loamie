@@ -9,7 +9,7 @@ import uk.co.thunderbadger.mud.net.SocketThread;
  * Represents a character that can be controlled by a human (well, a socket connection, at any rate).
  * Note that the character need not be controlled all the time.
  * 
- * @author Adam Gundry
+ * @author Adam Gundry extended by David Gundry
  */
 public final class PlayerCharacter extends GameCharacter
 {	
@@ -75,7 +75,12 @@ public final class PlayerCharacter extends GameCharacter
 		this.thread = null;
 	}
 	
-	
+	/**
+	 * Player Characters can modify the game world live. If the player issues a 'create' command,
+	 * this code is run. It interprets the arguments given to the 'create' command.
+	 * 
+	 * @param blueprint
+	 */
 	public void create(String blueprint)
 	{
 		int creationType = 0;
@@ -104,8 +109,8 @@ public final class PlayerCharacter extends GameCharacter
 				thread.sendMessage("That is not a valid room");
 				return;
 			}
-			if (creationTargetRoomNo < this.thread.getServer().getGame().getWorld().getRooms().size()){
-				creationTarget = this.thread.getServer().getGame().getWorld().getRooms().get(creationTargetRoomNo);
+			if (creationTargetRoomNo < this.thread.getServerThread().getGame().getWorld().getRooms().size()){
+				creationTarget = this.thread.getServerThread().getGame().getWorld().getRooms().get(creationTargetRoomNo);
 			} else{
 				thread.sendMessage("That room does not exist!");
 				return;
@@ -130,10 +135,17 @@ public final class PlayerCharacter extends GameCharacter
 			thread.sendMessage("Wrong syntax!");
 			return;
 		}
-		if (creationType == 2) this.thread.getServer().getGame().getWorld().getRooms().add(new Room(creationName, blueprint));
+		if (creationType == 2) this.thread.getServerThread().getGame().getWorld().getRooms().add(new Room(creationName, blueprint));
 		if (creationType == 3) this.getLocation().objectEntered(new Door(creationName, blueprint, creationTarget));
 	}
 	
+	/**
+	 * Player Characters can modify the game world live. If the player issues an 'edit' command,
+	 * this code is run. It interprets the arguments given to the 'edit' command and changes the
+	 * world accordingly.
+	 * 
+	 * @param blueprint
+	 */
 	public void edit(String blueprint)
 	{
 		if (blueprint.startsWith("room ")){
@@ -199,15 +211,22 @@ public final class PlayerCharacter extends GameCharacter
 			}		
 	}
 	
+	/**
+	 * Player Characters can modify the game world live. If the player issues an 'delete' command,
+	 * this code is run. It interprets the arguments given to the 'delete' command and changes the
+	 * world accordingly.
+	 * 
+	 * @param blueprint
+	 */
 	public void delete(String blueprint)
 	{
 		if (blueprint.equals("room")){
-			if (this.getLocation() != this.thread.getServer().getGame().getWorld().getRooms().get(0)){
+			if (this.getLocation() != this.thread.getServerThread().getGame().getWorld().getRooms().get(0)){
 				Room roomToDelete = this.getLocation();
-				this.getLocation().ejectContents(this.thread.getServer().getGame().getWorld().getRooms().get(0));
+				this.getLocation().ejectContents(this.thread.getServerThread().getGame().getWorld().getRooms().get(0));
 				// This could potentially cause a problem if someone manages to enter the room just after everything has
 				// been ejected. They might then be trapped?
-				this.thread.getServer().getGame().getWorld().getRooms().remove(roomToDelete);
+				this.thread.getServerThread().getGame().getWorld().getRooms().remove(roomToDelete);
 				return;
 			}
 		}		
@@ -217,6 +236,12 @@ public final class PlayerCharacter extends GameCharacter
 			}		
 	}
 	
+	/**
+	 * Interprets an 'eject' command, which forcibly moves an object, or the entire contents of a room
+	 * to a room specified within the command.
+	 * 
+	 * @param text
+	 */
 	public void eject(String text)
 	{
 		StringTokenizer st = new StringTokenizer(text);
@@ -241,40 +266,50 @@ public final class PlayerCharacter extends GameCharacter
 			return;
 		}
 		target = Math.abs(target);
-		if (target >= this.thread.getServer().getGame().getWorld().getRooms().size()){
+		if (target >= this.thread.getServerThread().getGame().getWorld().getRooms().size()){
 			thread.sendMessage("That is not a valid room");
 			return;
 		}
 		
 		if (victimName.equals("all"))
-			this.getLocation().ejectContents(this.thread.getServer().getGame().getWorld().getRooms().get(target));
+			this.getLocation().ejectContents(this.thread.getServerThread().getGame().getWorld().getRooms().get(target));
 		else 
 			if (this.getLocation().getContentsByName(victimName) != null)
-				this.getLocation().getContentsByName(victimName).moveTo(this.thread.getServer().getGame().getWorld().getRooms().get(target));
+				this.getLocation().getContentsByName(victimName).moveTo(this.thread.getServerThread().getGame().getWorld().getRooms().get(target));
 			else thread.sendMessage("Cannot find " + victimName);
 	}
 	
 	public void userLookUp()
 	{
 		thread.sendMessage("IP Address       Username");
-		for (SocketThread user: this.thread.getServer().getThreads()){
+		for (SocketThread user: this.thread.getServerThread().getThreads()){
 			thread.sendMessage(user.getIP() + "  " + user.getCharacter().getName());
 		}
 		
 	}
 	
+	/**
+	 * Moves this player character to the room with the specified ID.
+	 * 
+	 * @param roomNo
+	 */
 	public void moveToByID(int roomNo)
 	{
 		roomNo = Math.abs(roomNo);
-		if (roomNo < this.thread.getServer().getGame().getWorld().getRooms().size())
-			this.moveTo(this.thread.getServer().getGame().getWorld().getRooms().get(roomNo));
+		if (roomNo < this.thread.getServerThread().getGame().getWorld().getRooms().size())
+			this.moveTo(this.thread.getServerThread().getGame().getWorld().getRooms().get(roomNo));
 		else
 			this.receiveMessage("That is not a valid room");
 	}
 
+	/**
+	 * Moves this player character to the room with the specified name.
+	 * 
+	 * @param name
+	 */
 	public void moveToByName(String name)
 	{
-		for (Room place: this.thread.getServer().getGame().getWorld().getRooms())
+		for (Room place: this.thread.getServerThread().getGame().getWorld().getRooms())
 			if (place.getName().equals(name)){
 				this.moveTo(place);
 				return;
