@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,6 +16,7 @@ import org.w3c.dom.NodeList;
  */
 public class Door implements WorldObject, Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String description;
 	private Room target;

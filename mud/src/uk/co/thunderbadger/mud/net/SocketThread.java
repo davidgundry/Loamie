@@ -10,10 +10,8 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import uk.co.thunderbadger.mud.world.PlayerCharacter;
-import uk.co.thunderbadger.mud.world.Room;
 import uk.co.thunderbadger.mud.world.WorldObject;
 import uk.co.thunderbadger.mud.world.command.AdminCommandInterpreter;
-import uk.co.thunderbadger.mud.world.command.CommandInterpreter;
 import uk.co.thunderbadger.mud.world.command.PlayerCommandInterpreter;
 import uk.co.thunderbadger.mud.world.command.UnLoggedInCommandInterpreter;
 
@@ -25,6 +23,7 @@ import uk.co.thunderbadger.mud.world.command.UnLoggedInCommandInterpreter;
  */
 public final class SocketThread extends Thread implements Serializable 
 {            		
+	private static final long serialVersionUID = 1L;
 	private boolean running = false;    	
 	private String remoteIP = "unknown";
 	

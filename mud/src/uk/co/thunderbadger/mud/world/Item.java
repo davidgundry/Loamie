@@ -18,6 +18,7 @@ import uk.co.thunderbadger.mud.ScriptInterpreter;
  */
 public class Item implements Serializable, WorldObject {
 
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String description;
 	private List<WorldObject> contents = new ArrayList<WorldObject>();

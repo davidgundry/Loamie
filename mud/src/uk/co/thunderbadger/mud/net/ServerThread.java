@@ -1,6 +1,5 @@
 package uk.co.thunderbadger.mud.net;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,19 +10,13 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.BindException;
 import java.net.ServerSocket;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,15 +24,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException; 
 
 import uk.co.thunderbadger.mud.Game;
-import uk.co.thunderbadger.mud.world.Door;
-import uk.co.thunderbadger.mud.world.Item;
-import uk.co.thunderbadger.mud.world.Room;
 import uk.co.thunderbadger.mud.world.World;
-import uk.co.thunderbadger.mud.world.WorldObject;
-import uk.co.thunderbadger.mud.world.item.MapItem;
 
 
 /**
@@ -49,6 +36,8 @@ import uk.co.thunderbadger.mud.world.item.MapItem;
  */
 public final class ServerThread extends Thread implements Serializable 
 {	
+	private static final long serialVersionUID = 1L;
+	
 	Game game;
 	
 	private int port;
@@ -365,13 +354,10 @@ public final class ServerThread extends Thread implements Serializable
 			        else
 			        	return "Restore failed. Check server log.";
 				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (SAXException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return "Restore failed.";

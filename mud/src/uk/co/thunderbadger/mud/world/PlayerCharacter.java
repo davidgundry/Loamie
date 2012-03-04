@@ -13,7 +13,7 @@ import uk.co.thunderbadger.mud.net.SocketThread;
  */
 public final class PlayerCharacter extends GameCharacter
 {	
-	
+	private static final long serialVersionUID = 1L;
 	private transient volatile SocketThread thread;
 	
 	/**

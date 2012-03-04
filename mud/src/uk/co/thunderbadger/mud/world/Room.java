@@ -3,12 +3,7 @@ package uk.co.thunderbadger.mud.world;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 /**
  * Represents a room in the game world (that is, a location). Rooms can contain any world objects,
@@ -18,6 +13,7 @@ import java.util.Map.Entry;
  */
 public class Room implements Serializable, WorldObject
 {
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String description;
 	

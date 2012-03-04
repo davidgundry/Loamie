@@ -3,7 +3,6 @@ package uk.co.thunderbadger.mud.world.npc;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,10 +15,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import uk.co.thunderbadger.mud.world.NPCharacter;
-
 public class Dialogue implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String line;
 	private int trigger;
 	private List<Dialogue> dialogues = new ArrayList<Dialogue>();

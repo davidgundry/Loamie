@@ -3,12 +3,7 @@ package uk.co.thunderbadger.mud.world.item;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,6 +16,7 @@ import uk.co.thunderbadger.mud.world.WorldObject;
 
 public class MapItem extends Item implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	String art;
 	String[] targets;
 	

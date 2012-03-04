@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 public class GameCharacter implements Serializable, WorldObject
 {
 
+	private static final long serialVersionUID = 1L;
 	// name cannot be the same as a room (Item drop code)
 	protected String name;	
 	protected String description;	

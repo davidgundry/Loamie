@@ -22,6 +22,7 @@ import uk.co.thunderbadger.mud.world.npc.Dialogue;
  */
 public class NPCharacter extends GameCharacter  {
 	
+	private static final long serialVersionUID = 1L;
 	private String greeting = "";
 	private String farewell = "";
 	private String dismissal = "They have nothing to say to you.";

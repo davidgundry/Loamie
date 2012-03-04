@@ -20,6 +20,7 @@ import uk.co.thunderbadger.mud.world.item.MapItem;
  */
 public class World implements WorldObject{
 
+	private static final long serialVersionUID = 1L;
 	private List<Room> rooms = new ArrayList<Room>();
 
 	private String goodbyeMessage = "";

@@ -1,10 +1,7 @@
 package uk.co.thunderbadger.mud;
 
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,10 +14,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uk.co.thunderbadger.mud.net.ServerThread;
-import uk.co.thunderbadger.mud.world.NPCharacter;
 import uk.co.thunderbadger.mud.world.PlayerCharacter;
 import uk.co.thunderbadger.mud.world.World;
-import uk.co.thunderbadger.mud.world.npc.Dialogue;
 
 /**
  * Overall control of the game server.
