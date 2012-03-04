@@ -1,6 +1,6 @@
-package uk.co.thunderbadger.mud.world.command;
+package uk.co.gundry.david.mud.world.command;
 
-import uk.co.thunderbadger.mud.net.SocketThread;
+import uk.co.gundry.david.mud.net.SocketThread;
 
 public interface CommandInterpreter {
 

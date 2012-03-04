@@ -1,10 +1,10 @@
-package uk.co.thunderbadger.mud;
+package uk.co.gundry.david.mud;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import uk.co.thunderbadger.mud.world.GameCharacter;
-import uk.co.thunderbadger.mud.world.WorldObject;
+import uk.co.gundry.david.mud.world.GameCharacter;
+import uk.co.gundry.david.mud.world.WorldObject;
 
 /**
  * The script interpreter is the class that is called whenever a script is run,

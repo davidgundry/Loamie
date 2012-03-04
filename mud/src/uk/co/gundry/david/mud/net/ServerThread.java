@@ -1,4 +1,4 @@
-package uk.co.thunderbadger.mud.net;
+package uk.co.gundry.david.mud.net;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,8 +25,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import uk.co.thunderbadger.mud.Game;
-import uk.co.thunderbadger.mud.world.World;
+import uk.co.gundry.david.mud.Game;
+import uk.co.gundry.david.mud.world.World;
 
 
 /**

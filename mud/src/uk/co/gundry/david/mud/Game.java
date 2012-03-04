@@ -1,4 +1,4 @@
-package uk.co.thunderbadger.mud;
+package uk.co.gundry.david.mud;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,9 +13,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import uk.co.thunderbadger.mud.net.ServerThread;
-import uk.co.thunderbadger.mud.world.PlayerCharacter;
-import uk.co.thunderbadger.mud.world.World;
+import uk.co.gundry.david.mud.net.ServerThread;
+import uk.co.gundry.david.mud.world.PlayerCharacter;
+import uk.co.gundry.david.mud.world.World;
 
 /**
  * Overall control of the game server.
@@ -24,11 +24,21 @@ import uk.co.thunderbadger.mud.world.World;
  */
 public final class Game
 {
-	private static int PORT = 0;
-	private String welcomeMessage = "";
+	/**
+	 * This is the port the server listens on.
+	 * The default should be overwritten by a value loaded from the server config file.
+	 */
+	private static int PORT = 1357;
+	/**
+	 * This is the message players see when they first connect to the server.
+	 * The default should be overwritten by a value loaded from the server config file.
+	 */
+	private String welcomeMessage = "Welcome to the server!\n Type help for a list of commands.";
 
 	private ServerThread serverThread;
-
+	/**
+	 * This is the world currently running on the server.
+	 */
 	private World world;
 
 	
@@ -65,7 +75,7 @@ public final class Game
 		loadServerConfig();
 		world = new World();
 		
-		setServerThread(new ServerThread(this, getPort()));
+		this.serverThread = new ServerThread(this, getPort());
 		getServerThread().start();
 	}
 
@@ -87,26 +97,36 @@ public final class Game
 			        doc.getDocumentElement().normalize();
 			        
 			        NodeList portList = doc.getDocumentElement().getElementsByTagName("port");
-	                Element portElement = (Element)portList.item(0);
-	                NodeList portChildList =  portElement.getChildNodes();
-	                PORT = Integer.parseInt(((Node)portChildList.item(0)).getNodeValue().trim());
-	                
+			        if (portList.getLength() > 0)
+			        {
+				        Element portElement = (Element)portList.item(0);
+		                NodeList portChildList =  portElement.getChildNodes();
+		                PORT = Integer.parseInt(((Node)portChildList.item(0)).getNodeValue().trim());
+			        } else
+			        {
+			        	System.out.println("Error: <port> not found\n falling back to port " + PORT);
+			        }
+			        
 			        NodeList wmessageList = doc.getDocumentElement().getElementsByTagName("welcome-message");
-	                Element wmessageElement = (Element)wmessageList.item(0);
-	                NodeList wmessageChildList =  wmessageElement.getChildNodes();
-	                welcomeMessage = ((Node)wmessageChildList.item(0)).getNodeValue().trim();
+			        if (wmessageList.getLength() > 0)
+			        {
+		                Element wmessageElement = (Element)wmessageList.item(0);
+		                NodeList wmessageChildList =  wmessageElement.getChildNodes();
+		                welcomeMessage = ((Node)wmessageChildList.item(0)).getNodeValue().trim();
+			        }
+			        else
+			        {
+			        	System.out.println("Error: <welcome-message> not found\n falling back to default.");
+			        }
 			        
 					System.out.println("Config load sucessful.");
 					return;
 					
 				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (SAXException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -114,10 +134,6 @@ public final class Game
 				System.exit(1);
 	}
 	
-	public void setServerThread(ServerThread serverThread) {
-		this.serverThread = serverThread;
-	}
-
 	/**
 	 * Returns the thread that is currently listening for connections.
 	 */
@@ -126,7 +142,7 @@ public final class Game
 	}
 
 	/**
-	 * Returns the port that the server is curently listening for connections on.
+	 * Returns the port that the server is currently listening for connections on.
 	 */
 	public static int getPort() {
 		return PORT;

@@ -1,4 +1,4 @@
-package uk.co.thunderbadger.mud.net;
+package uk.co.gundry.david.mud.net;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import uk.co.thunderbadger.mud.world.PlayerCharacter;
-import uk.co.thunderbadger.mud.world.WorldObject;
-import uk.co.thunderbadger.mud.world.command.AdminCommandInterpreter;
-import uk.co.thunderbadger.mud.world.command.PlayerCommandInterpreter;
-import uk.co.thunderbadger.mud.world.command.UnLoggedInCommandInterpreter;
+import uk.co.gundry.david.mud.world.PlayerCharacter;
+import uk.co.gundry.david.mud.world.WorldObject;
+import uk.co.gundry.david.mud.world.command.AdminCommandInterpreter;
+import uk.co.gundry.david.mud.world.command.PlayerCommandInterpreter;
+import uk.co.gundry.david.mud.world.command.UnLoggedInCommandInterpreter;
 
 
 /**

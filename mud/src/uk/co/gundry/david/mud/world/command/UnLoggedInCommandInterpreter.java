@@ -1,8 +1,8 @@
-package uk.co.thunderbadger.mud.world.command;
+package uk.co.gundry.david.mud.world.command;
 
-import uk.co.thunderbadger.mud.net.SocketThread;
-import uk.co.thunderbadger.mud.world.PlayerCharacter;
-import uk.co.thunderbadger.mud.world.Room;
+import uk.co.gundry.david.mud.net.SocketThread;
+import uk.co.gundry.david.mud.world.PlayerCharacter;
+import uk.co.gundry.david.mud.world.Room;
 
 public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 

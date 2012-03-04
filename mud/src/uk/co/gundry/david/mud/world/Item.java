@@ -1,4 +1,4 @@
-package uk.co.thunderbadger.mud.world;
+package uk.co.gundry.david.mud.world;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import uk.co.thunderbadger.mud.ScriptInterpreter;
+import uk.co.gundry.david.mud.ScriptInterpreter;
 
 /**
  * Represents an item. Things which are not rooms, doors or characters. Things which can be picked up and dropped.

@@ -1,4 +1,4 @@
-package uk.co.thunderbadger.mud.world;
+package uk.co.gundry.david.mud.world;
 
 import java.io.PrintStream;
 import java.io.Serializable;

@@ -1,4 +1,4 @@
-package uk.co.thunderbadger.mud.world;
+package uk.co.gundry.david.mud.world;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import uk.co.thunderbadger.mud.ScriptInterpreter;
-import uk.co.thunderbadger.mud.world.npc.Dialogue;
+import uk.co.gundry.david.mud.ScriptInterpreter;
+import uk.co.gundry.david.mud.world.npc.Dialogue;
 
 /**
  * A Non-Player Character is an extension of a GameCharacter that gives the character dialogues, and
