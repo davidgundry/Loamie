@@ -34,7 +34,10 @@ public final class Game
 	 * The default should be overwritten by a value loaded from the server config file.
 	 */
 	private String welcomeMessage = "Welcome to the server!\n Type help for a list of commands.";
-
+	/**
+	 * When the server is running in verbose mode, it echos every command it receives.
+	 */
+	private static boolean verbose = true;	
 	private ServerThread serverThread;
 	/**
 	 * This is the world currently running on the server.
@@ -51,7 +54,10 @@ public final class Game
 	public PlayerCharacter createPlayerCharacter(String name, String description)
 	{
 		PlayerCharacter character = new PlayerCharacter(name, description);
-		character.moveTo(getWorld().getRooms().get(1));
+		if (getWorld().getRooms().size() > 1)
+			character.moveTo(getWorld().getRooms().get(1));
+		else
+			character.moveTo(getWorld().getRooms().get(0));
 		character.setLastRoom(character.getLocation());
 		return character;
 	}
@@ -81,7 +87,6 @@ public final class Game
 
 	/**
 	 * Loads the server configuration from the server-config.xml file.
-	 * At the moment is reading things as null!
 	 */
 	private void loadServerConfig()
 	{
@@ -104,7 +109,7 @@ public final class Game
 		                PORT = Integer.parseInt(((Node)portChildList.item(0)).getNodeValue().trim());
 			        } else
 			        {
-			        	System.out.println("Error: <port> not found\n falling back to port " + PORT);
+			        	System.err.println("Error: <port> not found\n falling back to port " + PORT);
 			        }
 			        
 			        NodeList wmessageList = doc.getDocumentElement().getElementsByTagName("welcome-message");
@@ -116,7 +121,7 @@ public final class Game
 			        }
 			        else
 			        {
-			        	System.out.println("Error: <welcome-message> not found\n falling back to default.");
+			        	System.err.println("Error: <welcome-message> not found\n falling back to default.");
 			        }
 			        
 					System.out.println("Config load sucessful.");
@@ -130,8 +135,30 @@ public final class Game
 					e.printStackTrace();
 				}
 				
-				System.out.println("Config load failed. Server will terminate.");
+				System.err.println("Config load failed. Server will terminate.");
 				System.exit(1);
+	}
+	
+	/**
+	 * Log an error (to standard error, at the moment).
+	 * 
+	 * @param error  Error to log
+	 */
+	public static void logError(String message, Throwable error)
+	{	
+		System.err.println(message);
+		if (error != null)
+			error.printStackTrace();
+	}
+	
+	/**
+	 * Log a message (to standard output, at the moment).
+	 * @param message  Text of message
+	 */
+	public static void logMessage(String message)
+	{	
+		if (verbose)
+			System.out.println(message);
 	}
 	
 	/**

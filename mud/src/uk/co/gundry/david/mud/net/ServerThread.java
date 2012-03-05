@@ -38,10 +38,10 @@ public final class ServerThread extends Thread implements Serializable
 {	
 	private static final long serialVersionUID = 1L;
 	
-	Game game;
+	private Game game;
 	
 	private int port;
-	private boolean verbose = true;	
+
 	
 	private transient List<SocketThread> threads = Collections.synchronizedList(new ArrayList<SocketThread>());		
 	
@@ -68,28 +68,7 @@ public final class ServerThread extends Thread implements Serializable
 	{
 		return threads;
 	}
-	
-	/**
-	 * Log an error (to standard error, at the moment).
-	 * 
-	 * @param error  Error to log
-	 */
-	public void logError(String message, Throwable error)
-	{	
-		System.err.println(message);
-		error.printStackTrace();
-	}
-	
-	/**
-	 * Log a message (to standard output, at the moment).
-	 * @param message  Text of message
-	 */
-	public void logMessage(String message)
-	{	
-		if (verbose)
-			System.out.println(message);
-	}
-	
+		
 	/**
 	 * Listens on the server's port, waits for clients to connect
 	 * and generates a SocketThread for each.
@@ -97,7 +76,7 @@ public final class ServerThread extends Thread implements Serializable
 	@Override
 	public void run()
 	{
-		logMessage("Starting server on port " +port + "...");
+		Game.logMessage("Starting server on port " +port + "...");
 		
 		ServerSocket serverSocket = null;
 		boolean listening = true;
@@ -106,10 +85,10 @@ public final class ServerThread extends Thread implements Serializable
 		{
 			serverSocket = new ServerSocket(port);
 		} catch (BindException e) {
-			logMessage("Unable to bind to port " + port + ". Make sure no other programs (or instances of this program) are using that port.");
+			Game.logMessage("Unable to bind to port " + port + ". Make sure no other programs (or instances of this program) are using that port.");
 			System.exit(-1);
 		} catch (IOException e) {
-			logMessage("Failed to listen on port " + port);
+			Game.logMessage("Failed to listen on port " + port);
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -123,7 +102,7 @@ public final class ServerThread extends Thread implements Serializable
 				thread.start();		
 			}
 		} catch (IOException e) {
-			logMessage("Exception occurred while accepting connections, terminating.");
+			Game.logMessage("Exception occurred while accepting connections, terminating.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -132,7 +111,7 @@ public final class ServerThread extends Thread implements Serializable
 		{
 			serverSocket.close();
 		} catch (IOException e) {
-			logMessage("Exception occurred while closing socket.");
+			Game.logMessage("Exception occurred while closing socket.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -182,7 +161,7 @@ public final class ServerThread extends Thread implements Serializable
 		try
 		{
 			File f=new File(filePrefix + dateFormat.format(new Date()) + ".save");
-			logMessage("Saving to:" + f.getAbsolutePath());
+			Game.logMessage("Saving to:" + f.getAbsolutePath());
 			new File(filePrefix).mkdirs();
 		    f.createNewFile();
 			fos = new FileOutputStream(filePrefix + dateFormat.format(new Date()) + ".save");
@@ -254,7 +233,7 @@ public final class ServerThread extends Thread implements Serializable
 			     ex.printStackTrace();
 			     return "Restore Failed! (ClassNotFoundException)";
 			   }			
-			   logMessage("Restored to state at: " + df.format(latestDate) + ".");
+				 Game.logMessage("Restored to state at: " + df.format(latestDate) + ".");
 			   return "Sucessfully restored to state at: " + df.format(latestDate) + ".";
 			}
 		} else {
@@ -262,7 +241,9 @@ public final class ServerThread extends Thread implements Serializable
 		}
 	}
 
-	
+	/**
+	 * Attempts to write the current World state to XML, so it can be restored later.
+	 */
 	public void saveWorldStateToXML()
 	{
 		FileOutputStream fos = null;
@@ -276,7 +257,7 @@ public final class ServerThread extends Thread implements Serializable
 		try
 		{
 			File f=new File(XMLFilePrefix + dateFormat.format(new Date()) + ".xml");
-			logMessage("Saving to:" + f.getAbsolutePath());
+			Game.logMessage("Saving to:" + f.getAbsolutePath());
 			new File(XMLFilePrefix).mkdirs();
 		    f.createNewFile();
 			fos = new FileOutputStream(XMLFilePrefix + dateFormat.format(new Date()) + ".xml");
@@ -338,12 +319,12 @@ public final class ServerThread extends Thread implements Serializable
 		        DocumentBuilder docBuilder;
 				try {
 					docBuilder = docBuilderFactory.newDocumentBuilder();
-					logMessage(XMLFilePrefix + df.format(latestDate) + ".xml");
+					Game.logMessage(XMLFilePrefix + df.format(latestDate) + ".xml");
 			        Document doc = docBuilder.parse (new File(XMLFilePrefix + df.format(latestDate) + ".xml"));
 			        doc.getDocumentElement().normalize();
-			        logMessage("Root element of the doc is " + doc.getDocumentElement().getNodeName());
+			        Game.logMessage("Root element of the doc is " + doc.getDocumentElement().getNodeName());
 					
-			        logMessage("Attempting to restore to state at " + df.format(latestDate));
+			        Game.logMessage("Attempting to restore to state at " + df.format(latestDate));
 			        
 			        World newWorld = getGame().getWorld().restoreStateFromXML(doc);
 			        if (newWorld != null)

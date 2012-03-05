@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.world.PlayerCharacter;
 import uk.co.gundry.david.mud.world.WorldObject;
 import uk.co.gundry.david.mud.world.command.AdminCommandInterpreter;
@@ -71,7 +72,7 @@ public final class SocketThread extends Thread implements Serializable
 		if (character != null){
 			sendMessage("You are now being placed in Limbo. When you log back on you will be returned to your previous location.");
 			character.moveToByID(0);
-			sendMessage(serverThread.game.getWorld().getGoodbyeMessage());
+			sendMessage(serverThread.getGame().getWorld().getGoodbyeMessage());
 			character.playerDisconnected();
 		}
     	logMessage("Connection closed.");	
@@ -91,7 +92,7 @@ public final class SocketThread extends Thread implements Serializable
 	 */
 	private void logError(Throwable error)
 	{		
-		serverThread.logError(String.format("<%s %d> Error occurred:", remoteIP, getId()), error);
+		Game.logError(String.format("<%s %d> Error occurred:", remoteIP, getId()), error);
 	}
 	
 	
@@ -102,7 +103,7 @@ public final class SocketThread extends Thread implements Serializable
 	 */
 	public void logMessage(String message)
 	{
-		serverThread.logMessage(String.format("<ID %d, address %s> %s", getId(), remoteIP, message));
+		Game.logMessage(String.format("<ID %d, address %s> %s", getId(), remoteIP, message));
 	}
 	
 	
@@ -199,7 +200,7 @@ public final class SocketThread extends Thread implements Serializable
             
             logMessage("Accepted connection.");
             sendMessage(serverThread.getGame().getWelcomeMessage());
-            sendMessage(serverThread.game.getWorld().getWelcomeMessage());
+            sendMessage(serverThread.getGame().getWorld().getWelcomeMessage());
             
     		running = true;
     		

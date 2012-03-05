@@ -9,7 +9,7 @@ import java.util.List;
  * Represents a room in the game world (that is, a location). Rooms can contain any world objects,
  * including other rooms (?).
  * 
- * @author Adam Gundry
+ * @author Adam Gundry extended by David Gundry
  */
 public class Room implements Serializable, WorldObject
 {
@@ -71,20 +71,33 @@ public class Room implements Serializable, WorldObject
 		this.receiveMessage(String.format("%s has left.", object.getName()));
 	}
 	
+	/**
+	 * Returns the name of this room.
+	 */
 	public String getName()
 	{
 		return name;
 	}
 	
+	/**
+	 * Returns the description of this room.
+	 */
 	public String getDescription()
 	{
 		return description;
 	}
 	
+	/**
+	 * Sets the name of this room to a string. There should be no spaces,
+	 * but underscores (_) can be used in place of spaces.
+	 */
 	public void setName(String newName){
 		name = newName;
 	}
 	
+	/**
+	 * Sets the description of the room to a string.
+	 */
 	public void setDescription(String newDescription){
 		description = newDescription;
 	}
@@ -93,6 +106,9 @@ public class Room implements Serializable, WorldObject
 		return 2;
 	}
 	
+	/**
+	 * Gets the room to describe its contents.
+	 */
 	public String describeContents()
 	{
 		String contentsText = "";
@@ -115,6 +131,9 @@ public class Room implements Serializable, WorldObject
 		return doors;
 	}
 	
+	/**
+	 * Gets the room to describe its doors.
+	 */
 	public String describeDoors()
 	{
 		String text = "";
@@ -159,13 +178,14 @@ public class Room implements Serializable, WorldObject
 		return false;
 	}
 	
+	/**
+	 * At the moment, this doesn't remove the things from the current room, but does move them into Limbo
+	 * @param target
+	 */
 	public void ejectContents(Room target)
 	{ 
-	// This doesn't seem to work?
-		for (WorldObject object: this.contents){
-	    	object.moveTo(target);
-	    }
-
+		for (WorldObject object: contents)
+	    	target.objectEntered(object);
 	}
 
 	public List<String> getSynonyms() {
@@ -182,20 +202,20 @@ public class Room implements Serializable, WorldObject
 			object.heal(value);
 	}
 
-	public int interpretCommand(String text, GameCharacter actor) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	/**
+	 * This is intentionally not implemented by Room.
+	 */
+	public int interpretCommand(String text, GameCharacter actor) {return 0;}
 
-	public int processCommand(String command) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	/**
+	 * This is intentionally not implemented by Room.
+	 */
+	public int processCommand(String command) {return 0;}
 
-	public void listenToCommand(String command, PlayerCharacter actor) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by Room.
+	 */
+	public void listenToCommand(String command, PlayerCharacter actor) {}
 
 	public void receiveMessageFromPlayer(String text) {
 		for (WorldObject object: contents)

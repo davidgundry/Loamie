@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.world.item.MapItem;
 
 /**
@@ -36,13 +37,15 @@ public class World implements WorldObject{
 		ps.println("	<goodbye-message>" + goodbyeMessage + "</goodbye-message>");
 		for (Room room: getRooms())
 		{
-			room.saveStateToXML(ps);
+			if (!room.getName().startsWith("DELETE"))
+				room.saveStateToXML(ps);
 		}
 		ps.println("</world>");
 	}
 	
 	/**
 	 * Takes a loaded XML document and creates a new World out of it.
+	 * At the moment loads NPCs but not Player Characters.
 	 * 
 	 * @param XMLFilePrefix
 	 * @param latestDate
@@ -86,7 +89,7 @@ public class World implements WorldObject{
 	                Element nameElement = (Element)nameList.item(0);
 	
 	                NodeList textNameList =  nameElement.getChildNodes();
-	                System.out.println("Name : " + ((Node)textNameList.item(0)).getNodeValue().trim());
+	                Game.logMessage("Name : " + ((Node)textNameList.item(0)).getNodeValue().trim());
 	                String thisName = ((Node)textNameList.item(0)).getNodeValue().trim();
 	
 	                //-------
@@ -94,27 +97,20 @@ public class World implements WorldObject{
 	                Element descriptionElement = (Element)descriptionList.item(0);
 	
 	                NodeList textDescList = descriptionElement.getChildNodes();
-	                System.out.println("Description : " + ((Node)textDescList.item(0)).getNodeValue().trim());
+	                Game.logMessage("Description : " + ((Node)textDescList.item(0)).getNodeValue().trim());
 	                String thisDesc = ((Node)textDescList.item(0)).getNodeValue().trim();
 	
 	                //------ LOAD DOORS ------- //
-	                
-	            	Door tempDoor = new Door();
-	            	List<Door> newDoors = tempDoor.loadStateFromXML(firstRoomElement);
+	            	List<Door> newDoors = Door.loadStateFromXML(firstRoomElement);
 	            	
 	            	//------ LOAD STANDARD ITEMS ------- //
-	                
-	            	Item tempItem = new Item();
-	            	List<Item> newItems = tempItem.loadStateFromXML(firstRoomElement);
+	            	List<Item> newItems = Item.loadStateFromXML(firstRoomElement);
 	            	
 	            	// ----- LOAD NPCS -------------//
-	            	NPCharacter tempNPC = new NPCharacter();
-	            	List<NPCharacter> newNPCs = tempNPC.loadStateFromXML(firstRoomElement);
+	            	List<NPCharacter> newNPCs = NPCharacter.loadStateFromXML(firstRoomElement);
 	            	
 	            	//------ LOAD MAP ITEMS ------- //
-	            	
-	            	MapItem tempMapItem = new MapItem();
-	            	List<Item> newMapItems = tempMapItem.loadStateFromXML(firstRoomElement);
+	            	List<Item> newMapItems = MapItem.loadStateFromXML(firstRoomElement);
 	            	
 	            	
 	                Room newRoom = new Room(thisName,thisDesc);
@@ -139,12 +135,11 @@ public class World implements WorldObject{
 	        	{
 	        		if (!door.findTarget(newWorld.getRooms()))
 	        		{
-	        			System.out.println("Failed at door " + door.getName() + " in room " + room.getName() + " due to bad target name " + door.getTargetName());
-	        			return null;
+	        			Game.logError("Warning: Failed at door " + door.getName() + " in room " + room.getName() + " due to bad target name " + door.getTargetName(),null);
+	        		//	return null;
 	        		}
 	        	}
 	        }
-	        
 	        
 	    /*    
 			// Bert as yet not in any save file
@@ -216,91 +211,89 @@ public class World implements WorldObject{
 		return welcomeMessage;
 	}
 
-	public String describeContents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public String describeContents() {return null;}
 
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public String getDescription() {return null;}
 
-	public WorldObject getLocation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public WorldObject getLocation() {return null;}
 
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public String getName() {return null;}
 
-	public List<String> getSynonyms() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public List<String> getSynonyms() {return null;}
 
-	public int getType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public int getType() {return -1;}
 
-	public void heal(int value) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void heal(int value) {}
 
-	public int interpretCommand(String text, GameCharacter actor) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public int interpretCommand(String text, GameCharacter actor) {return 0;}
 
-	public void listenToCommand(String command, PlayerCharacter actor) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void listenToCommand(String command, PlayerCharacter actor) {	}
 
-	public boolean moveTo(WorldObject location) {
-		return false;
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public boolean moveTo(WorldObject location) {return false;}
 
-	public void objectEntered(WorldObject object) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void objectEntered(WorldObject object) {}
 
-	public void objectExited(WorldObject object) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void objectExited(WorldObject object) {}
 
-	public int processCommand(String command, GameCharacter actor) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public int processCommand(String command, GameCharacter actor) {return 0;}
 
-	public void receiveMessage(String text) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void receiveMessage(String text) {}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void receiveMessageFromPlayer(String text) {}
 
-	public void receiveMessageFromPlayer(String text) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void setDescription(String newDescription) {}
 
-	public void setDescription(String newDescription) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setName(String newName) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This is intentionally not implemented by World.
+	 */
+	public void setName(String newName) {}
 	
 	
 }

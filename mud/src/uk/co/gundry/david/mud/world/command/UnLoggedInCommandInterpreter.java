@@ -1,5 +1,6 @@
 package uk.co.gundry.david.mud.world.command;
 
+import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.net.SocketThread;
 import uk.co.gundry.david.mud.world.PlayerCharacter;
 import uk.co.gundry.david.mud.world.Room;
@@ -42,7 +43,7 @@ public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 				return true;
 			}
 			connection.sendMessage("The server has not got a world loaded.");
-			connection.getServerThread().logMessage("Player tried to connect to empty world!");
+			Game.logMessage("Player tried to connect to empty world!");
 			return true;
 		}
 		

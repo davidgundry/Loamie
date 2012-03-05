@@ -166,7 +166,7 @@ public class NPCharacter extends GameCharacter  {
 		
 	}
 
-	public List<NPCharacter> loadStateFromXML(Element firstRoomElement)
+	public static List<NPCharacter> loadStateFromXML(Element firstRoomElement)
 	{
 		NodeList npcList = firstRoomElement.getElementsByTagName("npc");
         int totalItems = npcList.getLength();

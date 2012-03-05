@@ -71,7 +71,6 @@ public final class PlayerCharacter extends GameCharacter
 	 */
 	public void playerDisconnected()
 	{
-	//	location.objectExited(this);
 		this.thread = null;
 	}
 	
@@ -216,22 +215,32 @@ public final class PlayerCharacter extends GameCharacter
 	 * this code is run. It interprets the arguments given to the 'delete' command and changes the
 	 * world accordingly.
 	 * 
+	 * This removes all objects in the room, gets rid of all doors, and marks the room for deletion.
+	 * In theory no one can reenter the room without admin powers, and it will be skipped on the next save.
+	 * 
 	 * @param blueprint
 	 */
 	public void delete(String blueprint)
 	{
 		if (blueprint.equals("room")){
-			if (this.getLocation() != this.thread.getServerThread().getGame().getWorld().getRooms().get(0)){
+			if (this.getLocation() != this.thread.getServerThread().getGame().getWorld().getRooms().get(0))
+			{ // You really don't want to delete Limbo
 				Room roomToDelete = this.getLocation();
-				this.getLocation().ejectContents(this.thread.getServerThread().getGame().getWorld().getRooms().get(0));
-				// This could potentially cause a problem if someone manages to enter the room just after everything has
-				// been ejected. They might then be trapped?
-				this.thread.getServerThread().getGame().getWorld().getRooms().remove(roomToDelete);
+				for (Door door: roomToDelete.getDoors())
+				{
+					roomToDelete.objectExited(door);
+				}
+				roomToDelete.ejectContents(this.thread.getServerThread().getGame().getWorld().getRooms().get(0));
+
+				roomToDelete.setName("DELETE" + roomToDelete.getName());
+				//this.thread.getServerThread().getGame().getWorld().getRooms().remove(roomToDelete);
 				return;
 			}
 		}		
 		else {
-			this.getLocation().objectExited(this.getLocation().getContentsByName(blueprint));
+			WorldObject object = this.getLocation().getContentsByName(blueprint);
+			if (object != null)
+				this.getLocation().objectExited(object);
 			return;
 			}		
 	}
@@ -316,5 +325,5 @@ public final class PlayerCharacter extends GameCharacter
 			}
 		this.receiveMessage("That is not a valid room");
 	}
-
+	
 }

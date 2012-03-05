@@ -116,7 +116,7 @@ public class MapItem extends Item implements Serializable {
 			actor.receiveMessage("The map does not understand that command.");
 	}
 	
-	public List<Item> loadStateFromXML(Element firstRoomElement)
+	public static List<Item> loadStateFromXML(Element firstRoomElement)
 	{
 		NodeList itemList = firstRoomElement.getElementsByTagName("mapitem");
         int totalItems = itemList.getLength();

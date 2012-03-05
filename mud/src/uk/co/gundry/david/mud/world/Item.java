@@ -250,7 +250,7 @@ public class Item implements Serializable, WorldObject {
 	 * 
 	 * @param firstRoomElement
 	 */
-	public List<Item> loadStateFromXML(Element firstRoomElement)
+	public static List<Item> loadStateFromXML(Element firstRoomElement)
 	{
 		NodeList itemList = firstRoomElement.getElementsByTagName("item");
         int totalItems = itemList.getLength();

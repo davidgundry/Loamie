@@ -21,7 +21,7 @@ public class GameCharacter implements Serializable, WorldObject
 	protected String name;	
 	protected String description;	
 	
-	private List<String> synonyms;
+	private List<String> synonyms = new ArrayList<String>();
 	
 	protected Room location;
 	protected Room lastRoom;
@@ -302,9 +302,27 @@ public class GameCharacter implements Serializable, WorldObject
 		
 	}
 
+	/** 
+	 * Writes all of the information to save in XML format to the supplied PrintStream
+	 */
 	public void saveStateToXML(PrintStream ps) {
-		// TODO Auto-generated method stub
 		
+		ps.println("		<game-character>");
+		ps.println("			<name>"+this.name+"</name>");
+		ps.println("			<description>"+this.description+"</description>");
+
+
+		ps.println("			 <hp>" + hitPoints + "</hp>");
+		ps.println("			 <xp>" + xp + "</xp>");
+		for (String syn: synonyms)
+		{
+			ps.println("			<synonym>"+ syn + "</synonym>");
+		}
+		for (WorldObject cont: this.contents)
+		{
+			cont.saveStateToXML(ps);
+		}
+		ps.println("		</game-character>");
 	}
 	
 	void commandHeal(String command, GameCharacter actor){
@@ -337,6 +355,14 @@ public class GameCharacter implements Serializable, WorldObject
 		else
 			this.receiveMessage("What do you want me to heal?");
 
+	}
+
+	public List<WorldObject> getContents() {
+		return contents;
+	}
+
+	public void setContents(List<WorldObject> contents) {
+		this.contents = contents;
 	}
 	    
 }

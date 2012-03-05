@@ -45,9 +45,7 @@ public class Door implements WorldObject, Serializable {
 		this.synonyms = synonyms;
 	}
 	
-	public Door() {
-		// TODO Auto-generated constructor stub
-	}
+	public Door() {}
 
 	public String getDescription() {
 		return description;
@@ -164,7 +162,8 @@ public class Door implements WorldObject, Serializable {
 		ps.println("		<door>");
 		ps.println("			<name>"+this.getName()+"</name>");
 		ps.println("			<description>"+this.getDescription()+"</description>");
-		ps.println("			<target>"+this.getTarget().getName()+"</target>");
+		if ((this.getTarget() != null) && (!this.getTarget().getName().startsWith("DELETE")))
+			ps.println("			<target>"+this.getTarget().getName()+"</target>");
 		if (this.getSynonyms() != null)
 			for (String syn: this.getSynonyms())
 			{
@@ -173,7 +172,7 @@ public class Door implements WorldObject, Serializable {
 		ps.println("		</door>");
 	}
 
-	public List<Door> loadStateFromXML(Element firstRoomElement){
+	public static List<Door> loadStateFromXML(Element firstRoomElement){
 		NodeList doorList = firstRoomElement.getElementsByTagName("door");
         int totalDoors = doorList.getLength();
         System.out.println("Number of doors read: " + totalDoors);
@@ -210,12 +209,16 @@ public class Door implements WorldObject, Serializable {
 	                    String doorDesc = ((Node)textDoorDescList.item(0)).getNodeValue().trim();
 	                    
 	                    //-------
+	                    String doorTarget = "";
 	                    NodeList doorTargetList = firstDoorElement.getElementsByTagName("target");
-	                    Element doorTargetElement = (Element)doorTargetList.item(0);
-	
-	                    NodeList textDoorTargetList =  doorTargetElement.getChildNodes();
-	                    System.out.println("	Door : Target : " + ((Node)textDoorTargetList.item(0)).getNodeValue().trim());
-	                    String doorTarget = ((Node)textDoorTargetList.item(0)).getNodeValue().trim();
+	                    if (doorTargetList.getLength() >0)
+	                    {
+		                    Element doorTargetElement = (Element)doorTargetList.item(0);
+		                    
+		                    NodeList textDoorTargetList =  doorTargetElement.getChildNodes();
+		                    System.out.println("	Door : Target : " + ((Node)textDoorTargetList.item(0)).getNodeValue().trim());
+		                    doorTarget = ((Node)textDoorTargetList.item(0)).getNodeValue().trim();
+	                    }
 	                    
 	                  //----
 	                    NodeList synList = firstDoorElement.getElementsByTagName("synonym");
