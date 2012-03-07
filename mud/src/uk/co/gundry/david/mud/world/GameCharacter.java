@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import uk.co.gundry.david.mud.Game;
+
 /**
  * Represents a character in the game. Subclasses may represent player characters or
  * those with some kind of AI control.
@@ -21,7 +27,7 @@ public class GameCharacter implements Serializable, WorldObject
 	protected String name;	
 	protected String description;	
 	
-	private List<String> synonyms = new ArrayList<String>();
+	protected List<String> synonyms = new ArrayList<String>();
 	
 	protected Room location;
 	protected Room lastRoom;
@@ -31,6 +37,8 @@ public class GameCharacter implements Serializable, WorldObject
 	WorldObject listener;
 
 	private List<WorldObject> contents = new ArrayList<WorldObject>();
+	
+	public static final int TYPE = 0;
 	
 	/**
 	 * Create a new character with the given name and description
@@ -71,6 +79,15 @@ public class GameCharacter implements Serializable, WorldObject
 		this.listener = null;
 	}
 	
+	public GameCharacter(String gcName, String gcDesc, List<String> newSyns,int hp, int xp) {
+		this.name = gcName;
+		this.description = gcDesc;
+		this.synonyms = newSyns;
+		this.hitPoints = hp;
+		this.xp = xp;
+		this.listener = null;
+	}
+
 	/**
 	 * We do nothing with messages received. Subclasses should override this.
 	 */
@@ -118,7 +135,7 @@ public class GameCharacter implements Serializable, WorldObject
 	}
 	
 	public int getType(){
-		return 0;
+		return TYPE;
 	}
 	
 	/**
@@ -365,4 +382,82 @@ public class GameCharacter implements Serializable, WorldObject
 		this.contents = contents;
 	}
 	    
+	public static List<GameCharacter> loadStateFromXML(Element firstRoomElement)
+	{
+		NodeList gcList = firstRoomElement.getElementsByTagName("game-character");
+        int totalItems = gcList.getLength();
+        Game.logMessage("Number of gcs read: " + totalItems);
+        
+        List<GameCharacter> newGCs = new ArrayList<GameCharacter>();
+        
+    	Element gcElement = (Element)gcList.item(0);
+    	if (gcElement != null)
+		{
+    	NodeList childItemList = gcElement.getChildNodes();
+    	
+    	for(int j=0; j<childItemList.getLength(); j++){
+    		if (gcList.item(j) != null)
+    		{
+        		Node firstgcNode = gcList.item(j);
+	                if(firstgcNode.getNodeType() == Node.ELEMENT_NODE){
+        		
+            		Element firstgcElement = (Element)firstgcNode;
+            		
+            		 //-------
+                    NodeList itemNameList = firstgcElement.getElementsByTagName("name");
+                    Element itemNameElement = (Element)itemNameList.item(0);
+
+                    NodeList textItemNameList =  itemNameElement.getChildNodes();
+                    Game.logMessage("	GC : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    String gcName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
+
+                    //-------
+                    NodeList itemDescList = firstgcElement.getElementsByTagName("description");
+                    Element itemDescElement = (Element)itemDescList.item(0);
+
+                    NodeList textItemDescList =  itemDescElement.getChildNodes();
+                    Game.logMessage("	GC : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    String gcDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
+                    
+                    //-------
+                    NodeList nList = firstgcElement.getElementsByTagName("xp");
+                    Element nElement = (Element)nList.item(0);
+
+                    NodeList tnList =  nElement.getChildNodes();
+                    Game.logMessage("	GC : XP : " + ((Node)tnList.item(0)).getNodeValue().trim());
+                    int xp = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
+                   
+                    //-------
+                    nList = firstgcElement.getElementsByTagName("hp");
+                    nElement = (Element)nList.item(0);
+
+                    tnList =  nElement.getChildNodes();
+                    Game.logMessage("	GC : HP : " + ((Node)tnList.item(0)).getNodeValue().trim());
+                    int hp = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
+                   
+                    //----
+                    NodeList synList = firstgcElement.getElementsByTagName("synonym");
+		            int totalSyns = synList.getLength();
+		            Game.logMessage("Number of synonyms read: " + totalSyns);
+                    
+		            List<String> newSyns = new ArrayList<String>();
+		            
+                    for(int l=0; l<gcList.getLength(); l++){
+                    	if (synList.item(l) != null)
+                		{
+	                    	Element synElement = (Element)synList.item(l);
+	                    	NodeList childSynList = synElement.getChildNodes();
+	                   // 	Game.logMessage("	item : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
+		                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
+                		}
+                    }
+                        
+                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp));
+	                }
+	        	}
+        	}
+        }
+		return newGCs;
+	}
+	
 }

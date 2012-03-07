@@ -2,6 +2,7 @@ package uk.co.gundry.david.mud.world.command;
 
 import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.net.SocketThread;
+import uk.co.gundry.david.mud.world.GameCharacter;
 import uk.co.gundry.david.mud.world.PlayerCharacter;
 import uk.co.gundry.david.mud.world.Room;
 
@@ -23,16 +24,19 @@ public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 				for (Room room: Game.getWorld().getRooms())
 				{
 					if (room.getContentsByName(command.substring(6)) != null){
-						connection.setCharacter((PlayerCharacter) room.getContentsByName(command.substring(6)));
-						connection.sendMessage("A character has been found by that name.");
-						if (connection.getCharacter().getLocation() == Game.getWorld().getRooms().get(0)){
-							connection.getCharacter().moveTo(connection.getCharacter().getLastRoom());
-							connection.getCharacter().playerConnected(connection);
-							return true;
-						} else{
-							connection.logMessage(connection.getCharacter().getName() + " arrived in an unexpected location. Did the server not shut down properly?");
-							connection.getCharacter().playerConnected(connection);
-							return true;
+						if (room.getContentsByName(command.substring(6)).getType() == GameCharacter.TYPE);
+						{
+							connection.setCharacter(new PlayerCharacter((GameCharacter)room.getContentsByName(command.substring(6))));
+							connection.sendMessage("A character has been found by that name.");
+							if (connection.getCharacter().getLocation() == Game.getWorld().getRooms().get(0)){
+								connection.getCharacter().moveTo(connection.getCharacter().getLastRoom());
+								connection.getCharacter().playerConnected(connection);
+								return true;
+							} else{
+								connection.logMessage(connection.getCharacter().getName() + " arrived in an unexpected location. Did the server not shut down properly?");
+								connection.getCharacter().playerConnected(connection);
+								return true;
+							}
 						}
 					}	
 				}

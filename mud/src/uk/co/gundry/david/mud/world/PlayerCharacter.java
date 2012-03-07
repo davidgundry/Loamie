@@ -1,5 +1,7 @@
 package uk.co.gundry.david.mud.world;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -27,6 +29,20 @@ public final class PlayerCharacter extends GameCharacter
 		super(name, description);
 	}
 	
+	/**
+	 * Convert a GameCharacter into a PlayerCharacter
+	 * @param gc
+	 */
+	public PlayerCharacter(GameCharacter gc) {
+		this.synonyms = gc.getSynonyms();
+		this.location = gc.getLocation();
+		this.lastRoom = gc.getLastRoom();
+		this.hitPoints = gc.getHitPoints();
+		this.xp = gc.getXp();
+		this.name = gc.getName();
+		this.description = gc.getDescription();
+	}
+
 	/**
 	 * If a thread is attached, forwards the message through the socket.
 	 */
@@ -297,7 +313,6 @@ public final class PlayerCharacter extends GameCharacter
 		for (SocketThread user: this.thread.getServerThread().getThreads()){
 			thread.sendMessage(user.getIP() + "  " + user.getCharacter().getName());
 		}
-		
 	}
 	
 	/**

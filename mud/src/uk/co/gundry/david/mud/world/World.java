@@ -106,8 +106,11 @@ public class World implements WorldObject{
 	            	//------ LOAD STANDARD ITEMS ------- //
 	            	List<Item> newItems = Item.loadStateFromXML(firstRoomElement);
 	            	
+	            	// ----- LOAD GCS -------------//
+	            	List<GameCharacter> newNPCs = GameCharacter.loadStateFromXML(firstRoomElement);
+	            	
 	            	// ----- LOAD NPCS -------------//
-	            	List<NPCharacter> newNPCs = NPCharacter.loadStateFromXML(firstRoomElement);
+	            	//List<NPCharacter> newNPCs = NPCharacter.loadStateFromXML(firstRoomElement);
 	            	
 	            	//------ LOAD MAP ITEMS ------- //
 	            	List<Item> newMapItems = MapItem.loadStateFromXML(firstRoomElement);
