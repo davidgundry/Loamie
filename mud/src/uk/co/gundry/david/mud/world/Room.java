@@ -57,7 +57,7 @@ public class Room implements Serializable, WorldObject
 	public void objectEntered(WorldObject object)
 	{
 		contents.add(object);		
-		object.receiveMessage("\nYou have entered the " + this.name);
+		object.receiveMessage("\nYou have entered " + this.name);
 		this.receiveMessage(String.format("%s has entered.", object.getName()));
 	}
 	

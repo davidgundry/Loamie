@@ -56,14 +56,14 @@ public class World implements WorldObject{
 	{
 			World newWorld = new World();
 			
-	        NodeList wmessageList = doc.getDocumentElement().getElementsByTagName("welcome-message");
+	        NodeList wmessageList = doc.getElementsByTagName("welcome-message");
             Element wmessageElement = (Element)wmessageList.item(0);
             NodeList wmessageChildList =  wmessageElement.getChildNodes();
             if (((Node)wmessageChildList.item(0)) != null)
             	welcomeMessage = ((Node)wmessageChildList.item(0)).getNodeValue().trim();
            
 			
-	        NodeList gmessageList = doc.getDocumentElement().getElementsByTagName("goodbye-message");
+	        NodeList gmessageList = doc.getElementsByTagName("goodbye-message");
             Element gmessageElement = (Element)gmessageList.item(0);
             NodeList gmessageChildList =  gmessageElement.getChildNodes();
             if (((Node)gmessageChildList.item(0)) != null)
@@ -74,7 +74,7 @@ public class World implements WorldObject{
 	        
 	        NodeList listOfRooms = doc.getElementsByTagName("room");
 	        int totalRooms = listOfRooms.getLength();
-	        System.out.println("Number of rooms read: " + totalRooms);
+	        Game.logMessage("Number of rooms read: " + totalRooms);
 	
 	        for(int s=0; s<listOfRooms.getLength() ; s++){
 	

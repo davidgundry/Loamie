@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.world.GameCharacter;
 import uk.co.gundry.david.mud.world.Item;
 import uk.co.gundry.david.mud.world.PlayerCharacter;
@@ -120,7 +121,7 @@ public class MapItem extends Item implements Serializable {
 	{
 		NodeList itemList = firstRoomElement.getElementsByTagName("mapitem");
         int totalItems = itemList.getLength();
-        System.out.println("Number of mapitems read: " + totalItems);
+        Game.logMessage("Number of mapitems read: " + totalItems);
         
         List<Item> newItems = new ArrayList<Item>();
         
@@ -142,7 +143,7 @@ public class MapItem extends Item implements Serializable {
                     Element itemNameElement = (Element)itemNameList.item(0);
 
                     NodeList textItemNameList =  itemNameElement.getChildNodes();
-                    System.out.println("	Item : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    Game.logMessage("	Item : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
                     String itemName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
 
                     //-------
@@ -150,7 +151,7 @@ public class MapItem extends Item implements Serializable {
                     Element itemDescElement = (Element)itemDescList.item(0);
 
                     NodeList textItemDescList =  itemDescElement.getChildNodes();
-                    System.out.println("	Item : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    Game.logMessage("	Item : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
                     String itemDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
                     
            		 //-------
@@ -158,14 +159,14 @@ public class MapItem extends Item implements Serializable {
                     Element itemartElement = (Element)itemArtList.item(0);
 
                     NodeList textItemArtList =  itemartElement.getChildNodes();
-                    System.out.println("	Item : Art : " + ((Node)textItemArtList.item(0)).getNodeValue().trim());
+                    Game.logMessage("	Item : Art : " + ((Node)textItemArtList.item(0)).getNodeValue().trim());
                     String itemArt = ((Node)textItemArtList.item(0)).getNodeValue().trim();
 
                     
                     //----
                     NodeList synList = firstItemElement.getElementsByTagName("synonym");
 		            int totalSyns = synList.getLength();
-		            System.out.println("Number of synonyms read: " + totalSyns);
+		            Game.logMessage("Number of synonyms read: " + totalSyns);
                     
 		            List<String> newSyns = new ArrayList<String>();
 		            
@@ -174,7 +175,7 @@ public class MapItem extends Item implements Serializable {
                 		{
 	                    	Element synElement = (Element)synList.item(l);
 	                    	NodeList childSynList = synElement.getChildNodes();
-	                    	System.out.println("	item : Synonym : " + ((Node)childSynList.item(0)).getNodeValue().trim());
+	                    	Game.logMessage("	item : Synonym : " + ((Node)childSynList.item(0)).getNodeValue().trim());
 		                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
                 		}
                     }
@@ -182,7 +183,7 @@ public class MapItem extends Item implements Serializable {
                     //----
                     NodeList targetList = firstItemElement.getElementsByTagName("target");
 		            int totalTargets = targetList.getLength();
-		            System.out.println("Number of targets read: " + totalTargets);
+		            Game.logMessage("Number of targets read: " + totalTargets);
                     
 		            String[] newTargets = new String[targetList.getLength()];
 		            
@@ -191,7 +192,7 @@ public class MapItem extends Item implements Serializable {
                 		{
 	                    	Element TargetElement = (Element)targetList.item(l);
 	                    	NodeList childTargetList = TargetElement.getChildNodes();
-	                    	System.out.println("	item : Target : " + ((Node)childTargetList.item(0)).getNodeValue().trim());
+	                    	Game.logMessage("	item : Target : " + ((Node)childTargetList.item(0)).getNodeValue().trim());
 		                    newTargets[l] = ((Node)childTargetList.item(0)).getNodeValue().trim();
                 		}
                     }

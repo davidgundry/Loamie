@@ -9,6 +9,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.co.gundry.david.mud.Game;
+
 /**
  * Class for a door. A WorldItem that conveys people from one room to another, one way only.
  * 
@@ -175,7 +177,7 @@ public class Door implements WorldObject, Serializable {
 	public static List<Door> loadStateFromXML(Element firstRoomElement){
 		NodeList doorList = firstRoomElement.getElementsByTagName("door");
         int totalDoors = doorList.getLength();
-        System.out.println("Number of doors read: " + totalDoors);
+        Game.logMessage("Number of doors read: " + totalDoors);
         
         List<Door> newDoors = new ArrayList<Door>();
         
@@ -197,7 +199,7 @@ public class Door implements WorldObject, Serializable {
 	                    Element doorNameElement = (Element)doorNameList.item(0);
 	
 	                    NodeList textDoorNameList =  doorNameElement.getChildNodes();
-	                    System.out.println("	Door : Name : " + ((Node)textDoorNameList.item(0)).getNodeValue().trim());
+	                    Game.logMessage("	Door : Name : " + ((Node)textDoorNameList.item(0)).getNodeValue().trim());
 	                    String doorName = ((Node)textDoorNameList.item(0)).getNodeValue().trim();
 	
 	                    //-------
@@ -205,7 +207,7 @@ public class Door implements WorldObject, Serializable {
 	                    Element doorDescElement = (Element)doorDescList.item(0);
 	
 	                    NodeList textDoorDescList =  doorDescElement.getChildNodes();
-	                    System.out.println("	Door : Description : " + ((Node)textDoorDescList.item(0)).getNodeValue().trim());
+	                    Game.logMessage("	Door : Description : " + ((Node)textDoorDescList.item(0)).getNodeValue().trim());
 	                    String doorDesc = ((Node)textDoorDescList.item(0)).getNodeValue().trim();
 	                    
 	                    //-------
@@ -216,14 +218,14 @@ public class Door implements WorldObject, Serializable {
 		                    Element doorTargetElement = (Element)doorTargetList.item(0);
 		                    
 		                    NodeList textDoorTargetList =  doorTargetElement.getChildNodes();
-		                    System.out.println("	Door : Target : " + ((Node)textDoorTargetList.item(0)).getNodeValue().trim());
+		                    Game.logMessage("	Door : Target : " + ((Node)textDoorTargetList.item(0)).getNodeValue().trim());
 		                    doorTarget = ((Node)textDoorTargetList.item(0)).getNodeValue().trim();
 	                    }
 	                    
 	                  //----
 	                    NodeList synList = firstDoorElement.getElementsByTagName("synonym");
 			            int totalSyns = synList.getLength();
-			            System.out.println("Number of synonyms read: " + totalSyns);
+			            Game.logMessage("Number of synonyms read: " + totalSyns);
 	                    
 			            List<String> newSyns = new ArrayList<String>();
 			            
@@ -232,7 +234,7 @@ public class Door implements WorldObject, Serializable {
 	                		{
 		                    	Element synElement = (Element)synList.item(l);
 		                    	NodeList childSynList = synElement.getChildNodes();
-		                //    	System.out.println("	Door : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
+		                //    	Game.logMessage("	Door : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
 			                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
 	                		}
 	                    }

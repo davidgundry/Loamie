@@ -33,7 +33,12 @@ public final class Game
 	 * This is the message players see when they first connect to the server.
 	 * The default should be overwritten by a value loaded from the server config file.
 	 */
-	private String welcomeMessage = "Welcome to the server!\n Type help for a list of commands.";
+	private static String welcomeMessage = "Welcome to the server!\n Type help for a list of commands.";
+	private static String helpConsoleCommands;
+	private static String helpAdminCommands;
+	private static String helpGameCommands;
+	private static String worldSaveLocation;
+	private static int maxConnections = 100;
 	/**
 	 * When the server is running in verbose mode, it echos every command it receives.
 	 */
@@ -42,7 +47,7 @@ public final class Game
 	/**
 	 * This is the world currently running on the server.
 	 */
-	private World world;
+	private static World world;
 
 	
 	/**
@@ -51,7 +56,7 @@ public final class Game
 	 * 
 	 * @param name
 	 */
-	public PlayerCharacter createPlayerCharacter(String name, String description)
+	public static PlayerCharacter createPlayerCharacter(String name, String description)
 	{
 		PlayerCharacter character = new PlayerCharacter(name, description);
 		if (getWorld().getRooms().size() > 1)
@@ -81,8 +86,15 @@ public final class Game
 		loadServerConfig();
 		world = new World();
 		
-		this.serverThread = new ServerThread(this, getPort());
-		getServerThread().start();
+		this.serverThread = new ServerThread(getPort());
+		serverThread.start();
+		logMessage(serverThread.restoreWorldStateFromXML());
+		if (!hasWorldLoaded())
+		{
+			logError("World not found. Quitting.", null);
+			System.exit(1);
+		}
+		
 	}
 
 	/**
@@ -97,7 +109,7 @@ public final class Game
 		        DocumentBuilder docBuilder;
 				try {
 					docBuilder = docBuilderFactory.newDocumentBuilder();
-					System.out.println("Loading config from:" + configFile.getAbsolutePath());
+					logMessage("Loading config from:" + configFile.getAbsolutePath());
 			        Document doc = docBuilder.parse(configFile);
 			        doc.getDocumentElement().normalize();
 			        
@@ -109,8 +121,20 @@ public final class Game
 		                PORT = Integer.parseInt(((Node)portChildList.item(0)).getNodeValue().trim());
 			        } else
 			        {
-			        	System.err.println("Error: <port> not found\n falling back to port " + PORT);
+			        	logError("Error: <port> not found\nfalling back to port " + PORT,null);
 			        }
+			        
+			        NodeList maxConList = doc.getDocumentElement().getElementsByTagName("max-connections");
+			        if (maxConList.getLength() > 0)
+			        {
+				        Element maxConElement = (Element)maxConList.item(0);
+		                NodeList maxConChildList =  maxConElement.getChildNodes();
+		                maxConnections = Integer.parseInt(((Node)maxConChildList.item(0)).getNodeValue().trim());
+			        } else
+			        {
+			        	logError("Error: <max-connections> not found\nfalling back to default: " + maxConnections,null);
+			        }
+			        
 			        
 			        NodeList wmessageList = doc.getDocumentElement().getElementsByTagName("welcome-message");
 			        if (wmessageList.getLength() > 0)
@@ -121,10 +145,60 @@ public final class Game
 			        }
 			        else
 			        {
-			        	System.err.println("Error: <welcome-message> not found\n falling back to default.");
+			        	logError("Error: <welcome-message> not found\nfalling back to default.",null);
 			        }
 			        
-					System.out.println("Config load sucessful.");
+			        NodeList worldName = doc.getDocumentElement().getElementsByTagName("world");
+			        if (worldName.getLength() > 0)
+			        {
+		                Element worldNameElement = (Element)worldName.item(0);
+		                NodeList worldNameChildList =  worldNameElement.getChildNodes();
+		                worldSaveLocation = ((Node)worldNameChildList.item(0)).getNodeValue().trim() + "/";
+			        }
+			        else
+			        {
+			        	logError("Error: <world> not found\n. Falling back to \"world\"",null);
+			        	worldSaveLocation = "world" + "/";
+			        }
+			        
+			        NodeList help = doc.getDocumentElement().getElementsByTagName("help-console");
+			        if (help.getLength() > 0)
+			        {
+		                Element helpElement = (Element)help.item(0);
+		                NodeList helpChildList =  helpElement.getChildNodes();
+		                helpConsoleCommands = ((Node)helpChildList.item(0)).getNodeValue().trim();
+			        }
+			        else
+			        {
+			        	logError("Error: <help-console> not found\nIt is advised to specify help information.",null);
+			        }
+			        
+			        help = doc.getDocumentElement().getElementsByTagName("help-admin");
+			        if (help.getLength() > 0)
+			        {
+		                Element helpElement = (Element)help.item(0);
+		                NodeList helpChildList =  helpElement.getChildNodes();
+		                helpAdminCommands = ((Node)helpChildList.item(0)).getNodeValue().trim();
+			        }
+			        else
+			        {
+			        	logError("Error: <help-admin> not found\nIt is advised to specify help information.",null);
+			        }
+			        
+			        help = doc.getDocumentElement().getElementsByTagName("help-game");
+			        if (help.getLength() > 0)
+			        {
+		                Element helpElement = (Element)help.item(0);
+		                NodeList helpChildList =  helpElement.getChildNodes();
+		                helpGameCommands = ((Node)helpChildList.item(0)).getNodeValue().trim();
+			        }
+			        else
+			        {
+			        	logError("Error: <help-game> not found\nIt is advised to specify help information.",null);
+			        }
+			        
+			        
+					logMessage("Config load sucessful.");
 					return;
 					
 				} catch (ParserConfigurationException e) {
@@ -135,7 +209,7 @@ public final class Game
 					e.printStackTrace();
 				}
 				
-				System.err.println("Config load failed. Server will terminate.");
+				logError("Config load failed. Server will terminate.", null);
 				System.exit(1);
 	}
 	
@@ -181,14 +255,14 @@ public final class Game
 	 * 
 	 * @param world - world to run on the server
 	 */
-	public void setWorld(World world) {
-		this.world = world;
+	public static void setWorld(World w) {
+		world = w;
 	}
 
 	/**
 	 * Returns the world that is currently running on the server.
 	 */
-	public World getWorld() {
+	public static World getWorld() {
 		return world;
 	}
 
@@ -204,7 +278,48 @@ public final class Game
 	/**
 	 * Returns the current message that is displayed to users when they connect to the server.
 	 */
-	public String getWelcomeMessage() {
+	public static String getWelcomeMessage() {
 		return welcomeMessage;
+	}
+
+	/**
+	 * Returns the console help string that is loaded from the server-config.xml file
+	 * @return
+	 */
+	public static String getHelpConsoleCommands() {
+		return helpConsoleCommands;
+	}
+	
+	/**
+	 * Returns the admin help string that is loaded from the server-config.xml file
+	 * @return
+	 */
+	public static String getHelpAdminCommands() {
+		return helpAdminCommands;
+	}
+	
+	/**
+	 * Returns the in-game help string that is loaded from the server-config.xml file
+	 * @return
+	 */
+	public static String getHelpGameCommands() {
+		return helpGameCommands;
+	}
+
+	/**
+	 * Returns the path to the location to save the world files
+	 * @return
+	 */
+	public static String getWorldSaveLocation() {
+		return worldSaveLocation;
+	}
+	
+	public boolean hasWorldLoaded()
+	{
+		return (this.world != null);
+	}
+
+	public static int getMaxConnections() {
+		return maxConnections;
 	}
 }

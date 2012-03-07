@@ -69,10 +69,10 @@ public final class SocketThread extends Thread implements Serializable
      */
     public void disconnect()
     {    	    
-		if (character != null){
+		if (loggedIn()){
 			sendMessage("You are now being placed in Limbo. When you log back on you will be returned to your previous location.");
 			character.moveToByID(0);
-			sendMessage(serverThread.getGame().getWorld().getGoodbyeMessage());
+			sendMessage(Game.getWorld().getGoodbyeMessage());
 			character.playerDisconnected();
 		}
     	logMessage("Connection closed.");	
@@ -83,7 +83,6 @@ public final class SocketThread extends Thread implements Serializable
         
         serverThread.threadDisconnected(this);
     }
-    
     
 	/**
 	 * Log an error which occurred in this thread.
@@ -172,9 +171,14 @@ public final class SocketThread extends Thread implements Serializable
 		}
 		if (command.equals("help"))
 		{
-			sendMessage("Console Commands:\nlogin [username]\nhelp\nquit\n");
-			sendMessage("\nGame Commands:\nsay\nshout\n* (puts username infront. Eg. * dances = Fred dances)\n/ (Sends message with no atribution)\nlook\nlook at [object]\nstat (show your stats)\ndoors (Print info about doors)\n \nMany objects in the world accept many more commands, you'll just have to find them.");
-			sendMessage("\nAdmin Commands:\ngoto [roomNo]\ncreate [room/door to [roomNo]] [name] [description]\nedit [room/name] [newName] [newDescription]\ndelete [room/name]\neject [name/all] to [roomNo]");
+			if (character != null)
+			{
+				sendMessage(Game.getHelpGameCommands());
+				sendMessage(Game.getHelpAdminCommands());
+			}
+			
+			sendMessage(Game.getHelpConsoleCommands());
+				
 			return; 
 		}
 		
@@ -182,6 +186,26 @@ public final class SocketThread extends Thread implements Serializable
 		sendMessage("Huh?");
 	}
       
+	public void init()
+	{
+		try
+    	{
+    		// Set up the connection
+    		out = new PrintStream(socket.getOutputStream());
+        	in = new BufferedReader(new InputStreamReader(socket.getInputStream()));                           
+            remoteIP = socket.getInetAddress().getHostAddress();                      
+            
+            logMessage("Accepted connection.");
+            sendMessage(Game.getWelcomeMessage());
+            sendMessage(Game.getWorld().getWelcomeMessage());
+            
+    		running = true;
+    	} catch (IOException ex) {
+    		logError(ex);
+    		disconnect();
+    	}
+	}
+	
 	
     /**
      * Activate this network connection and loop while reading messages.
@@ -191,19 +215,8 @@ public final class SocketThread extends Thread implements Serializable
     @Override
     public void run()
     {
-    	try
-    	{
-    		// Set up the connection
-    		out = new PrintStream(socket.getOutputStream());
-        	in = new BufferedReader(new InputStreamReader(socket.getInputStream()));                           
-            remoteIP = socket.getInetAddress().getHostAddress();                      
-            
-            logMessage("Accepted connection.");
-            sendMessage(serverThread.getGame().getWelcomeMessage());
-            sendMessage(serverThread.getGame().getWorld().getWelcomeMessage());
-            
-    		running = true;
-    		
+   		try
+   		{
 	        while (running)
 	        {
 	        	String command = in.readLine();	        	
@@ -218,10 +231,12 @@ public final class SocketThread extends Thread implements Serializable
 	        	else
 	        		processCommand(command);
 	        }
-    	} catch (IOException ex) {
-    		logError(ex);
-    		disconnect();
-    	}
+   		}
+	    catch(IOException e)
+	    {
+	    	logError(e);
+	    }
+
     }
 
     /**
@@ -244,6 +259,15 @@ public final class SocketThread extends Thread implements Serializable
 	public void setCharacter(PlayerCharacter character) {
 		this.character = character;
 		
+	}
+	
+	/**
+	 * Returns true if the player has a character, false otherwise
+	 * @return
+	 */
+	public boolean loggedIn()
+	{
+		return (character != null);
 	}
 }
 

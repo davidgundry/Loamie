@@ -1,0 +1,34 @@
+<server>
+  <port>1357</port>
+  <max-connections>10</max-connections>
+  <world>alpha</world>
+  
+  <welcome-message>Welcome to the server!
+Type help for a list of commands.
+Type login *name* to play</welcome-message>
+
+  <help-console>Console Commands:
+login [username]
+help
+quit</help-console>
+  
+  <help-game>Game Commands:
+say
+shout
+* (puts username in front. Eg. * dances = Fred dances)
+/ (Sends message with no atribution)
+look
+look at [object]
+stat (show your stats)
+doors (Print info about doors)
+  
+Many objects in the world accept many more commands, you'll just have to find them.</help-game>
+  
+  <help-admin>Admin Commands:
+goto [roomNo]
+create [room/door to [roomNo]] [name] [description]
+edit [room/name] [newName] [newDescription]
+delete [room/name]
+eject [name/all] to [roomNo]</help-admin>
+
+</server>

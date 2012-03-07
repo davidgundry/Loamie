@@ -58,13 +58,13 @@ public class AdminCommandInterpreter implements CommandInterpreter {
 			return true;
 		}
 		
-		if (command.toLowerCase().equals("save"))
+		/*if (command.toLowerCase().equals("save"))
 		{
 			connection.getServerThread().saveWorldState();
 			return true;
-		}
+		}*/
 		
-		if (command.toLowerCase().equals("savexml"))
+		if (command.toLowerCase().equals("save"))
 		{
 			connection.getServerThread().saveWorldStateToXML();
 			return true;

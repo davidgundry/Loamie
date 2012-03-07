@@ -11,6 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.ScriptInterpreter;
 import uk.co.gundry.david.mud.world.npc.Dialogue;
 
@@ -192,7 +193,7 @@ public class NPCharacter extends GameCharacter  {
                     Element itemNameElement = (Element)itemNameList.item(0);
 
                     NodeList textItemNameList =  itemNameElement.getChildNodes();
-                    System.out.println("	NPC : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    Game.logMessage("	NPC : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
                     String npcName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
 
                     //-------
@@ -200,14 +201,14 @@ public class NPCharacter extends GameCharacter  {
                     Element itemDescElement = (Element)itemDescList.item(0);
 
                     NodeList textItemDescList =  itemDescElement.getChildNodes();
-                    System.out.println("	NPC : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    Game.logMessage("	NPC : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
                     String npcDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
                     
                    
                     //----
                     NodeList synList = firstNPCElement.getElementsByTagName("synonym");
 		            int totalSyns = synList.getLength();
-		            System.out.println("Number of synonyms read: " + totalSyns);
+		            Game.logMessage("Number of synonyms read: " + totalSyns);
                     
 		            List<String> newSyns = new ArrayList<String>();
 		            
@@ -216,7 +217,7 @@ public class NPCharacter extends GameCharacter  {
                 		{
 	                    	Element synElement = (Element)synList.item(l);
 	                    	NodeList childSynList = synElement.getChildNodes();
-	                   // 	System.out.println("	item : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
+	                   // 	Game.logMessage("	item : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
 		                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
                 		}
                     }

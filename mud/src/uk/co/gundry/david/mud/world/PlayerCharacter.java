@@ -3,6 +3,7 @@ package uk.co.gundry.david.mud.world;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.net.SocketThread;
 
 /**
@@ -108,8 +109,8 @@ public final class PlayerCharacter extends GameCharacter
 				thread.sendMessage("That is not a valid room");
 				return;
 			}
-			if (creationTargetRoomNo < this.thread.getServerThread().getGame().getWorld().getRooms().size()){
-				creationTarget = this.thread.getServerThread().getGame().getWorld().getRooms().get(creationTargetRoomNo);
+			if (creationTargetRoomNo < Game.getWorld().getRooms().size()){
+				creationTarget = Game.getWorld().getRooms().get(creationTargetRoomNo);
 			} else{
 				thread.sendMessage("That room does not exist!");
 				return;
@@ -134,7 +135,7 @@ public final class PlayerCharacter extends GameCharacter
 			thread.sendMessage("Wrong syntax!");
 			return;
 		}
-		if (creationType == 2) this.thread.getServerThread().getGame().getWorld().getRooms().add(new Room(creationName, blueprint));
+		if (creationType == 2) Game.getWorld().getRooms().add(new Room(creationName, blueprint));
 		if (creationType == 3) this.getLocation().objectEntered(new Door(creationName, blueprint, creationTarget));
 	}
 	
@@ -223,14 +224,14 @@ public final class PlayerCharacter extends GameCharacter
 	public void delete(String blueprint)
 	{
 		if (blueprint.equals("room")){
-			if (this.getLocation() != this.thread.getServerThread().getGame().getWorld().getRooms().get(0))
+			if (this.getLocation() != Game.getWorld().getRooms().get(0))
 			{ // You really don't want to delete Limbo
 				Room roomToDelete = this.getLocation();
 				for (Door door: roomToDelete.getDoors())
 				{
 					roomToDelete.objectExited(door);
 				}
-				roomToDelete.ejectContents(this.thread.getServerThread().getGame().getWorld().getRooms().get(0));
+				roomToDelete.ejectContents(Game.getWorld().getRooms().get(0));
 
 				roomToDelete.setName("DELETE" + roomToDelete.getName());
 				//this.thread.getServerThread().getGame().getWorld().getRooms().remove(roomToDelete);
@@ -275,21 +276,23 @@ public final class PlayerCharacter extends GameCharacter
 			return;
 		}
 		target = Math.abs(target);
-		if (target >= this.thread.getServerThread().getGame().getWorld().getRooms().size()){
+		if (target >= Game.getWorld().getRooms().size()){
 			thread.sendMessage("That is not a valid room");
 			return;
 		}
 		
 		if (victimName.equals("all"))
-			this.getLocation().ejectContents(this.thread.getServerThread().getGame().getWorld().getRooms().get(target));
+			this.getLocation().ejectContents(Game.getWorld().getRooms().get(target));
 		else 
 			if (this.getLocation().getContentsByName(victimName) != null)
-				this.getLocation().getContentsByName(victimName).moveTo(this.thread.getServerThread().getGame().getWorld().getRooms().get(target));
+				this.getLocation().getContentsByName(victimName).moveTo(Game.getWorld().getRooms().get(target));
 			else thread.sendMessage("Cannot find " + victimName);
 	}
 	
 	public void userLookUp()
 	{
+		thread.sendMessage(thread.getServerThread().countConnections() + " / " + Game.getMaxConnections() + "users connected.");
+		thread.sendMessage(thread.getServerThread().countLogins() + " users currently playing.");
 		thread.sendMessage("IP Address       Username");
 		for (SocketThread user: this.thread.getServerThread().getThreads()){
 			thread.sendMessage(user.getIP() + "  " + user.getCharacter().getName());
@@ -305,8 +308,8 @@ public final class PlayerCharacter extends GameCharacter
 	public void moveToByID(int roomNo)
 	{
 		roomNo = Math.abs(roomNo);
-		if (roomNo < this.thread.getServerThread().getGame().getWorld().getRooms().size())
-			this.moveTo(this.thread.getServerThread().getGame().getWorld().getRooms().get(roomNo));
+		if (roomNo < Game.getWorld().getRooms().size())
+			this.moveTo(Game.getWorld().getRooms().get(roomNo));
 		else
 			this.receiveMessage("That is not a valid room");
 	}
@@ -318,7 +321,7 @@ public final class PlayerCharacter extends GameCharacter
 	 */
 	public void moveToByName(String name)
 	{
-		for (Room place: this.thread.getServerThread().getGame().getWorld().getRooms())
+		for (Room place: Game.getWorld().getRooms())
 			if (place.getName().equals(name)){
 				this.moveTo(place);
 				return;

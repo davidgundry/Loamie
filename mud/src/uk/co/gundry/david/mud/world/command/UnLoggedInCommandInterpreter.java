@@ -18,14 +18,14 @@ public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 	{
 		if (command.startsWith("login "))
 		{
-			if (connection.getServerThread().getGame().getWorld().getRooms().size() > 0)
+			if (Game.getWorld().getRooms().size() > 0)
 			{
-				for (Room room: connection.getServerThread().getGame().getWorld().getRooms())
+				for (Room room: Game.getWorld().getRooms())
 				{
 					if (room.getContentsByName(command.substring(6)) != null){
 						connection.setCharacter((PlayerCharacter) room.getContentsByName(command.substring(6)));
 						connection.sendMessage("A character has been found by that name.");
-						if (connection.getCharacter().getLocation() == connection.getServerThread().getGame().getWorld().getRooms().get(0)){
+						if (connection.getCharacter().getLocation() == Game.getWorld().getRooms().get(0)){
 							connection.getCharacter().moveTo(connection.getCharacter().getLastRoom());
 							connection.getCharacter().playerConnected(connection);
 							return true;
@@ -37,7 +37,7 @@ public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 					}	
 				}
 				
-				connection.setCharacter(connection.getServerThread().getGame().createPlayerCharacter(command.substring(6), "As yet completely undescribed and unremarkable."));
+				connection.setCharacter(Game.createPlayerCharacter(command.substring(6), "As yet completely undescribed and unremarkable."));
 				connection.sendMessage("A new character has been created.");
 				connection.getCharacter().playerConnected(connection);
 				return true;
@@ -47,13 +47,13 @@ public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 			return true;
 		}
 		
-		if (command.toLowerCase().equals("restore"))
+		/*if (command.toLowerCase().equals("restore"))
 		{
 			connection.sendMessage(connection.getServerThread().restoreWorldState());
 			return true;
-		}
+		}*/
 		
-		if (command.toLowerCase().equals("restorexml"))
+		if (command.toLowerCase().equals("restore"))
 		{
 			connection.sendMessage(connection.getServerThread().restoreWorldStateFromXML());
 			return true;
