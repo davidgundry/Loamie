@@ -79,13 +79,15 @@ public class GameCharacter implements Serializable, WorldObject
 		this.listener = null;
 	}
 	
-	public GameCharacter(String gcName, String gcDesc, List<String> newSyns,int hp, int xp) {
+	public GameCharacter(String gcName, String gcDesc, List<String> newSyns,int hp, int xp, Room location) {
 		this.name = gcName;
 		this.description = gcDesc;
 		this.synonyms = newSyns;
 		this.hitPoints = hp;
 		this.xp = xp;
 		this.listener = null;
+		this.location = location;
+		this.lastRoom = location;
 	}
 
 	/**
@@ -329,8 +331,20 @@ public class GameCharacter implements Serializable, WorldObject
 		ps.println("			<description>"+this.description+"</description>");
 
 
-		ps.println("			 <hp>" + hitPoints + "</hp>");
-		ps.println("			 <xp>" + xp + "</xp>");
+		ps.println("			<hp>" + hitPoints + "</hp>");
+		ps.println("			<xp>" + xp + "</xp>");
+		boolean foundIt = false;
+		for (int i=0;i<Game.getWorld().getRooms().size();i++)
+		{
+			if (Game.getWorld().getRooms().get(i).getName().equals(location.getName()))
+			{
+				foundIt = true;
+				ps.println("			<location>" + i + "</location>");
+			}
+			if (foundIt)
+				break;
+		}
+
 		for (String syn: synonyms)
 		{
 			ps.println("			<synonym>"+ syn + "</synonym>");
@@ -435,6 +449,16 @@ public class GameCharacter implements Serializable, WorldObject
                     Game.logMessage("	GC : HP : " + ((Node)tnList.item(0)).getNodeValue().trim());
                     int hp = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
                    
+                    
+                    //-------
+                    nList = firstgcElement.getElementsByTagName("location");
+                    nElement = (Element)nList.item(0);
+
+                    tnList =  nElement.getChildNodes();
+                    Game.logMessage("	GC : Location : " + ((Node)tnList.item(0)).getNodeValue().trim());
+                    int loc = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
+                    Room location = Game.getWorld().getRooms().get(loc);
+                    
                     //----
                     NodeList synList = firstgcElement.getElementsByTagName("synonym");
 		            int totalSyns = synList.getLength();
@@ -452,7 +476,7 @@ public class GameCharacter implements Serializable, WorldObject
                 		}
                     }
                         
-                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp));
+                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp,location));
 	                }
 	        	}
         	}

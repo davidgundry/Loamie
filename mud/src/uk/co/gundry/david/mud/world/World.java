@@ -52,9 +52,9 @@ public class World implements WorldObject{
 	 * @param df
 	 * @return
 	 */
-	public World restoreStateFromXML(Document doc)
+	public void restoreStateFromXML(Document doc)
 	{
-			World newWorld = new World();
+			Game.setWorld(new World());
 			
 	        NodeList wmessageList = doc.getElementsByTagName("welcome-message");
             Element wmessageElement = (Element)wmessageList.item(0);
@@ -100,6 +100,8 @@ public class World implements WorldObject{
 	                Game.logMessage("Description : " + ((Node)textDescList.item(0)).getNodeValue().trim());
 	                String thisDesc = ((Node)textDescList.item(0)).getNodeValue().trim();
 	
+	                Game.getWorld().getRooms().add(new Room(thisName,thisDesc));
+	                
 	                //------ LOAD DOORS ------- //
 	            	List<Door> newDoors = Door.loadStateFromXML(firstRoomElement);
 	            	
@@ -107,7 +109,7 @@ public class World implements WorldObject{
 	            	List<Item> newItems = Item.loadStateFromXML(firstRoomElement);
 	            	
 	            	// ----- LOAD GCS -------------//
-	            	List<GameCharacter> newNPCs = GameCharacter.loadStateFromXML(firstRoomElement);
+	            	List<GameCharacter> newGCs = GameCharacter.loadStateFromXML(firstRoomElement);
 	            	
 	            	// ----- LOAD NPCS -------------//
 	            	//List<NPCharacter> newNPCs = NPCharacter.loadStateFromXML(firstRoomElement);
@@ -116,27 +118,24 @@ public class World implements WorldObject{
 	            	List<Item> newMapItems = MapItem.loadStateFromXML(firstRoomElement);
 	            	
 	            	
-	                Room newRoom = new Room(thisName,thisDesc);
 	                for (int k=0; k<newDoors.size();k++)
-	                	newRoom.objectEntered(newDoors.get(k));
+	                	Game.getWorld().getRooms().get(Game.getWorld().getRooms().size()-1).objectEntered(newDoors.get(k));
 	                for (int k=0; k<newItems.size();k++)
-	                	newItems.get(k).moveTo(newRoom);
+	                	newItems.get(k).moveTo(Game.getWorld().getRooms().get(Game.getWorld().getRooms().size()-1));
 	                for (int k=0; k<newMapItems.size();k++)
-	                	newMapItems.get(k).moveTo(newRoom);
-	                for (int k=0; k<newNPCs.size();k++)
-	                	newNPCs.get(k).moveTo(newRoom);
-	                
-	                newWorld.getRooms().add(newRoom);
+	                	newMapItems.get(k).moveTo(Game.getWorld().getRooms().get(Game.getWorld().getRooms().size()-1));
+	                for (int k=0; k<newGCs.size();k++)
+	                	newGCs.get(k).moveTo(Game.getWorld().getRooms().get(0));
 	                
 	            }
 	
 	        }
 	        
-	        for (Room room: newWorld.getRooms())
+	        for (Room room: Game.getWorld().getRooms())
 	        {
 	        	for (Door door: room.getDoors())
 	        	{
-	        		if (!door.findTarget(newWorld.getRooms()))
+	        		if (!door.findTarget(Game.getWorld().getRooms()))
 	        		{
 	        			Game.logError("Warning: Failed at door " + door.getName() + " in room " + room.getName() + " due to bad target name " + door.getTargetName(),null);
 	        		//	return null;
@@ -161,7 +160,6 @@ public class World implements WorldObject{
 			newWorld.getRooms().get(1).objectEntered(new NPCharacter("Bert","A small green man.","\"Hi there!\"\n1 Tell me about yourself.\n2 Help me!","Farewell then!",convox));		
 			
 			*/
-		return newWorld;
 	}
 	
 	/**

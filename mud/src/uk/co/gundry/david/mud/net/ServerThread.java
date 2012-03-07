@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import uk.co.gundry.david.mud.Game;
 import uk.co.gundry.david.mud.world.World;
@@ -316,21 +317,17 @@ public final class ServerThread extends Thread
 					
 			        Game.logMessage("Attempting to restore to state at " + df.format(latestDate));
 			        
-			        World newWorld = Game.getWorld().restoreStateFromXML(doc);
-			        if (newWorld != null)
+			        Game.getWorld().restoreStateFromXML(doc);
+			        if (Game.getWorld() != null)
 			        {
-						Game.setWorld(newWorld);
 						return "Restore sucessful.";
 			        }
 			        else
 			        	return "Restore failed. Check server log.";
-				} catch (ParserConfigurationException e) {
-					e.printStackTrace();
-				} catch (SAXException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					Game.logError("Restore failed due to exception",e);
 				}
+				Game.setWorld(null);
 				return "Restore failed.";
 			}
 		} else {
