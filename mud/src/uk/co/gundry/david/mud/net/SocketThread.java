@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -22,9 +21,8 @@ import uk.co.gundry.david.mud.world.command.UnLoggedInCommandInterpreter;
  * 
  * @author Adam Gundry, extended by David Gundry
  */
-public final class SocketThread extends Thread implements Serializable 
+public final class SocketThread extends Thread
 {            		
-	private static final long serialVersionUID = 1L;
 	private boolean running = false;    	
 	private String remoteIP = "unknown";
 	

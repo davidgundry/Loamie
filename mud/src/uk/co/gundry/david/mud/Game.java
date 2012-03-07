@@ -28,22 +28,41 @@ public final class Game
 	 * This is the port the server listens on.
 	 * The default should be overwritten by a value loaded from the server config file.
 	 */
-	private static int PORT = 1357;
+	private static int port = 1357;
 	/**
 	 * This is the message players see when they first connect to the server.
 	 * The default should be overwritten by a value loaded from the server config file.
 	 */
 	private static String welcomeMessage = "Welcome to the server!\n Type help for a list of commands.";
+	/**
+	 * This is a string about commands for users not logged in.
+	 * A value should be loaded from the server config file.
+	 */
 	private static String helpConsoleCommands;
+	/**
+	 * This is a string about commands for admins and those with access to admin commands
+	 * A value should be loaded from the server config file.
+	 */
 	private static String helpAdminCommands;
+	/**
+	 * This is a string about commands for logged in players.
+	 * A value should be loaded from the server config file.
+	 */
 	private static String helpGameCommands;
+	/**
+	 * This is the location of the world save files
+	 * It must be loaded correctly from the server config file for the server to run.
+	 */
 	private static String worldSaveLocation;
+	/**
+	 * This is the total number of socketThreads this server will allow at any one time.
+	 * The default value should be overwritten by a value loaded from the server config file.
+	 */
 	private static int maxConnections = 100;
 	/**
 	 * When the server is running in verbose mode, it echos every command it receives.
 	 */
 	private static boolean verbose = true;	
-	private ServerThread serverThread;
 	/**
 	 * This is the world currently running on the server.
 	 */
@@ -86,7 +105,7 @@ public final class Game
 		loadServerConfig();
 		world = new World();
 		
-		this.serverThread = new ServerThread(getPort());
+		ServerThread serverThread = new ServerThread(getPort());
 		serverThread.start();
 		logMessage(serverThread.restoreWorldStateFromXML());
 		if (!hasWorldLoaded())
@@ -118,10 +137,10 @@ public final class Game
 			        {
 				        Element portElement = (Element)portList.item(0);
 		                NodeList portChildList =  portElement.getChildNodes();
-		                PORT = Integer.parseInt(((Node)portChildList.item(0)).getNodeValue().trim());
+		                port = Integer.parseInt(((Node)portChildList.item(0)).getNodeValue().trim());
 			        } else
 			        {
-			        	logError("Error: <port> not found\nfalling back to port " + PORT,null);
+			        	logError("Error: <port> not found\nfalling back to port " + port,null);
 			        }
 			        
 			        NodeList maxConList = doc.getDocumentElement().getElementsByTagName("max-connections");
@@ -236,17 +255,10 @@ public final class Game
 	}
 	
 	/**
-	 * Returns the thread that is currently listening for connections.
-	 */
-	public ServerThread getServerThread() {
-		return serverThread;
-	}
-
-	/**
 	 * Returns the port that the server is currently listening for connections on.
 	 */
 	public static int getPort() {
-		return PORT;
+		return port;
 	}
 
 	/**
@@ -271,8 +283,8 @@ public final class Game
 	 * 
 	 * @param welcomeMessage - message to display
 	 */
-	public void setWelcomeMessage(String welcomeMessage) {
-		this.welcomeMessage = welcomeMessage;
+	public void setWelcomeMessage(String wm) {
+		welcomeMessage = wm;
 	}
 
 	/**
@@ -314,11 +326,17 @@ public final class Game
 		return worldSaveLocation;
 	}
 	
+	/**
+	 * Returns true if the server is running a world, false otherwise.
+	 */
 	public boolean hasWorldLoaded()
 	{
-		return (this.world != null);
+		return (world != null);
 	}
 
+	/**
+	 * Returns the max concurrent connections allowed by the server.
+	 */
 	public static int getMaxConnections() {
 		return maxConnections;
 	}

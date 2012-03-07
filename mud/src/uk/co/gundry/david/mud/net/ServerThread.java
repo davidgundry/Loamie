@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.text.DateFormat;
@@ -31,19 +30,15 @@ import uk.co.gundry.david.mud.world.World;
  * 
  * @author Adam Gundry, extended by David Gundry
  */
-public final class ServerThread extends Thread implements Serializable 
+public final class ServerThread extends Thread
 {	
-	private static final long serialVersionUID = 1L;
-	
+
 	private int port;
 	
 	/**
 	 * ArrayList of socket connections to the server
 	 */
 	private transient List<SocketThread> threads = Collections.synchronizedList(new ArrayList<SocketThread>());		
-	
-	//private String filePrefix = System.getProperty("user.dir") + "//save//";
-	//private String XMLFilePrefix = System.getProperty("user.dir") + "//xml//";
 	
 	/**
 	 * Creates a server on the given port.
