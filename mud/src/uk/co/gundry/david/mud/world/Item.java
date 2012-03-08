@@ -316,7 +316,7 @@ public class Item implements Serializable, WorldObject {
                     for(int l=0; l<itemList.getLength(); l++){
                     	if (commList.item(l) != null)
                 		{
-                    		Node firstCommNode = commList.item(j);
+                    		Node firstCommNode = commList.item(l);
      		                if(firstCommNode.getNodeType() == Node.ELEMENT_NODE){
      		                	
      		                	Element firstCommElement = (Element)firstCommNode;

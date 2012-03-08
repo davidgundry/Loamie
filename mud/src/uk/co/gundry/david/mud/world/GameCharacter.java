@@ -334,21 +334,41 @@ public class GameCharacter implements Serializable, WorldObject
 		ps.println("			<hp>" + hitPoints + "</hp>");
 		ps.println("			<xp>" + xp + "</xp>");
 		boolean foundIt = false;
+		int pie = -1;
 		for (int i=0;i<Game.getWorld().getRooms().size();i++)
 		{
 			if (Game.getWorld().getRooms().get(i).getName().equals(location.getName()))
 			{
 				foundIt = true;
-				ps.println("			<location>" + i + "</location>");
+				if (i != 0) // If people have logged off, you don't want it thinking they should be in Limbo
+					ps.println("			<location>" + i + "</location>");
 			}
 			if (foundIt)
+			{
+				pie = i;
 				break;
+			}
+			
 		}
-
+		if (pie == 0)
+		{
+			for (int i=0;i<Game.getWorld().getRooms().size();i++)
+			{
+				if (Game.getWorld().getRooms().get(i).getName().equals(lastRoom.getName()))
+				{
+					foundIt = true;
+					ps.println("			<location>" + i + "</location>");
+				}
+				if (foundIt)
+					break;
+			}
+		}
+		
 		for (String syn: synonyms)
 		{
 			ps.println("			<synonym>"+ syn + "</synonym>");
 		}
+		
 		for (WorldObject cont: this.contents)
 		{
 			cont.saveStateToXML(ps);
@@ -451,13 +471,21 @@ public class GameCharacter implements Serializable, WorldObject
                    
                     
                     //-------
+                    Room gcLoc = new Room();
                     nList = firstgcElement.getElementsByTagName("location");
-                    nElement = (Element)nList.item(0);
-
-                    tnList =  nElement.getChildNodes();
-                    Game.logMessage("	GC : Location : " + ((Node)tnList.item(0)).getNodeValue().trim());
-                    int loc = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
-                    Room location = Game.getWorld().getRooms().get(loc);
+                    if (nList.getLength()>0)
+                    {
+	                    nElement = (Element)nList.item(0);
+	                    tnList =  nElement.getChildNodes();
+	                    Game.logMessage("	GC : Location : " + ((Node)tnList.item(0)).getNodeValue().trim());
+	                    int loc = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
+	                    gcLoc = Game.getWorld().getRooms().get(loc);
+                    }
+                    else
+                    {
+                    	Game.logError("Location missing for GC " + gcName + "Setting to Limbo.", null);
+                    	gcLoc = Game.getWorld().getRooms().get(0);
+                    }
                     
                     //----
                     NodeList synList = firstgcElement.getElementsByTagName("synonym");
@@ -476,7 +504,7 @@ public class GameCharacter implements Serializable, WorldObject
                 		}
                     }
                         
-                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp,location));
+                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp,gcLoc));
 	                }
 	        	}
         	}
