@@ -31,6 +31,7 @@ public class GameCharacter implements Serializable, WorldObject
 	
 	protected Room location;
 	protected Room lastRoom;
+	int lastRoomID;
 	protected int hitPoints;
 	protected int xp;
 	
@@ -79,7 +80,7 @@ public class GameCharacter implements Serializable, WorldObject
 		this.listener = null;
 	}
 	
-	public GameCharacter(String gcName, String gcDesc, List<String> newSyns,int hp, int xp, Room location) {
+	public GameCharacter(String gcName, String gcDesc, List<String> newSyns,int hp, int xp,int lastRm, Room location) {
 		this.name = gcName;
 		this.description = gcDesc;
 		this.synonyms = newSyns;
@@ -87,7 +88,7 @@ public class GameCharacter implements Serializable, WorldObject
 		this.xp = xp;
 		this.listener = null;
 		this.location = location;
-		this.lastRoom = location;
+		this.lastRoomID = lastRm;
 	}
 
 	/**
@@ -316,11 +317,43 @@ public class GameCharacter implements Serializable, WorldObject
 		this.listener = listener;
 	}
 
+	/**
+	 * This is overrided by PlayerCharacters (with socket connections), which
+	 * forward the message over the socket.
+	 */
 	public void receiveMessageFromPlayer(String text) {
 		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * Moves this GameCharacter to the room with the specified ID.
+	 * 
+	 * @param roomNo
+	 */
+	public void moveToByID(int roomNo)
+	{
+		roomNo = Math.abs(roomNo);
+		if (roomNo < Game.getWorld().getRooms().size())
+			this.moveTo(Game.getWorld().getRooms().get(roomNo));
+		else
+			this.receiveMessage("That is not a valid room");
+	}
+
+	/**
+	 * Moves this GameCharacter to the room with the specified name.
+	 * 
+	 * @param name
+	 */
+	public void moveToByName(String name)
+	{
+		for (Room place: Game.getWorld().getRooms())
+			if (place.getName().equals(name)){
+				this.moveTo(place);
+				return;
+			}
+		this.receiveMessage("That is not a valid room");
+	}
+	
 	/** 
 	 * Writes all of the information to save in XML format to the supplied PrintStream
 	 */
@@ -329,39 +362,29 @@ public class GameCharacter implements Serializable, WorldObject
 		ps.println("		<game-character>");
 		ps.println("			<name>"+this.name+"</name>");
 		ps.println("			<description>"+this.description+"</description>");
-
-
 		ps.println("			<hp>" + hitPoints + "</hp>");
 		ps.println("			<xp>" + xp + "</xp>");
 		boolean foundIt = false;
-		int pie = -1;
 		for (int i=0;i<Game.getWorld().getRooms().size();i++)
 		{
 			if (Game.getWorld().getRooms().get(i).getName().equals(location.getName()))
 			{
 				foundIt = true;
-				if (i != 0) // If people have logged off, you don't want it thinking they should be in Limbo
-					ps.println("			<location>" + i + "</location>");
-			}
-			if (foundIt)
-			{
-				pie = i;
-				break;
-			}
-			
-		}
-		if (pie == 0)
-		{
-			for (int i=0;i<Game.getWorld().getRooms().size();i++)
-			{
-				if (Game.getWorld().getRooms().get(i).getName().equals(lastRoom.getName()))
-				{
-					foundIt = true;
-					ps.println("			<location>" + i + "</location>");
-				}
+				ps.println("			<location>" + i + "</location>");
 				if (foundIt)
 					break;
 			}
+		}
+		foundIt = false;
+		for (int i=0;i<Game.getWorld().getRooms().size();i++)
+		{
+			if (Game.getWorld().getRooms().get(i).getName().equals(lastRoom.getName()))
+			{
+				foundIt = true;
+				ps.println("			<last-room>" + i + "</last-room>");
+			}
+			if (foundIt)
+				break;
 		}
 		
 		for (String syn: synonyms)
@@ -483,8 +506,24 @@ public class GameCharacter implements Serializable, WorldObject
                     }
                     else
                     {
-                    	Game.logError("Location missing for GC " + gcName + "Setting to Limbo.", null);
+                    	Game.logError("<location> missing for GC " + gcName + "Setting to Limbo.", null);
                     	gcLoc = Game.getWorld().getRooms().get(0);
+                    }
+                    
+                    //-------
+                    int gcLastRm =0;
+                    nList = firstgcElement.getElementsByTagName("last-room");
+                    if (nList.getLength()>0)
+                    {
+	                    nElement = (Element)nList.item(0);
+	                    tnList =  nElement.getChildNodes();
+	                    Game.logMessage("	GC : Last Room : " + ((Node)tnList.item(0)).getNodeValue().trim());
+	                    gcLastRm = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
+                    }
+                    else
+                    {
+                    	Game.logError("<last-room> missing for GC " + gcName + "Setting to Limbo.", null);
+                    	gcLastRm = 0;
                     }
                     
                     //----
@@ -504,12 +543,16 @@ public class GameCharacter implements Serializable, WorldObject
                 		}
                     }
                         
-                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp,gcLoc));
+                    newGCs.add(new GameCharacter(gcName,gcDesc,newSyns,hp,xp,gcLastRm,gcLoc));
 	                }
 	        	}
         	}
         }
 		return newGCs;
+	}
+
+	public void lastRoomFromID() {
+		this.lastRoom = Game.getWorld().getRooms().get(lastRoomID);
 	}
 	
 }

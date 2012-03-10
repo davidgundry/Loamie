@@ -143,6 +143,10 @@ public class World implements WorldObject{
 	        	}
 	        }
 	        
+	        for (Room room: Game.getWorld().getRooms())
+	        	for (GameCharacter gc: room.getGameCharacters())
+	        		gc.lastRoomFromID();
+	        
 	    /*    
 			// Bert as yet not in any save file
 			List<Dialogue> convo2x = new ArrayList<Dialogue>();

@@ -131,6 +131,16 @@ public class Room implements Serializable, WorldObject
 		return doors;
 	}
 	
+	public List<GameCharacter> getGameCharacters()
+	{
+		List<GameCharacter> gcs = new ArrayList<GameCharacter>();
+		
+		for (int i=0;i<contents.size();i++)
+			if (contents.get(i).getType() == GameCharacter.TYPE) gcs.add((GameCharacter) contents.get(i));
+		
+		return gcs;
+	}
+	
 	/**
 	 * Gets the room to describe its doors.
 	 */
