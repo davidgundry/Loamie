@@ -17,57 +17,42 @@ import uk.co.gundry.david.mud.ScriptInterpreter;
  * 
  * @author David Gundry
  */
-public class Item implements Serializable, WorldObject {
+public class Item extends WorldObject implements Serializable {
 
+	private static final int TYPE = 1;
 	private static final long serialVersionUID = 1L;
-	private String name;
-	private String description;
-	private List<WorldObject> contents = new ArrayList<WorldObject>();
-	private WorldObject location;
-	
-	private List<String> synonyms;
 	private Map<String, String> commands = new HashMap<String,String>();
 	
 
 	public Item(String name, String description, WorldObject location)
 	{
-		this.name = name;
-		this.description = description;
+		super(name,description);
 		this.location = location;
 	}
 	
 	public Item(String name, String description, List<String> synonyms)
 	{
-		this.name = name;
-		this.description = description;
-		this.synonyms = synonyms;
+		super(name,description,synonyms);
 	}
 	
 	public Item(String name, String description, WorldObject location, List<String> synonyms)
 	{
-		this.name = name;
-		this.description = description;
-		this.location = location;
-		this.synonyms = synonyms;
+		super(name,description,synonyms,location);
 	}
 	
 	public Item(String name, String description, WorldObject location, List<String> synonyms, Map<String,String> commands)
 	{
-		this.name = name;
-		this.description = description;
-		this.location = location;
-		this.synonyms = synonyms;
+		super(name,description,synonyms,location);
 		this.commands = commands;
 	}
 
 	public Item(String itemName, String itemDesc, List<String> newSyns, Map<String, String> newComms) {
-		this.name = itemName;
-		this.description = itemDesc;
-		this.synonyms = newSyns;
+		super(itemName,itemDesc,newSyns);
 		this.commands = newComms;
 	}
 
 	public Item() {
+		super();
 	}
 
 	public String describeContents() {
@@ -81,13 +66,6 @@ public class Item implements Serializable, WorldObject {
 		return contentsText;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public String getName() {
-		return name;
-	}
 	
 	public WorldObject getLocation() {
 		return location;
@@ -97,10 +75,10 @@ public class Item implements Serializable, WorldObject {
 		this.commands = commands;
 	}
 
-	public int getType() {
-		return 1;
+	public int getType(){
+		return TYPE;
 	}
-
+	
 	public boolean moveTo(WorldObject location) {
 		if (location != null)
 		{
@@ -150,62 +128,9 @@ public class Item implements Serializable, WorldObject {
 			return 0;
 	}
 
-	public void receiveMessage(String text) {
-
-	}
-
-	public void setDescription(String newDescription) {
-		this.description = newDescription;
-
-	}
-
-	public void setName(String newName) {
-		this.name = newName;
-
-	}
-	
-	/**
-	 * Called when an object enters this item. Adds it to the contents list.
-	 * 
-	 * @param object
-	 */
-	public void objectEntered(WorldObject object)
-	{
-		contents.add(object);
-	}
-	
-	/**
-	 * Calls when an object leaves this item. Removes it from the contents list.
-	 * 
-	 * @param object
-	 */
-	public void objectExited(WorldObject object)
-	{
-		contents.remove(object);
-	}
-
-	public List<String> getSynonyms() {
-		return synonyms;
-	}
-
 	public int processCommand(String command, GameCharacter actor) {
 		ScriptInterpreter si = new ScriptInterpreter();
 		return si.interpret(command, this, actor);
-	}
-	
-	public void heal(int value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void listenToCommand(String command, PlayerCharacter actor) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void receiveMessageFromPlayer(String text) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**

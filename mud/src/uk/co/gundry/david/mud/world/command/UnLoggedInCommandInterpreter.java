@@ -24,7 +24,7 @@ public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 				for (Room room: Game.getWorld().getRooms())
 				{
 					if (room.getContentsByName(command.substring(6)) != null){
-						if (room.getContentsByName(command.substring(6)).getType() == GameCharacter.TYPE);
+						if (room.getContentsByName(command.substring(6)).getType() == GameCharacter.getStaticType());
 						{
 							connection.setCharacter(new PlayerCharacter((GameCharacter)room.getContentsByName(command.substring(6))));
 							connection.sendMessage("A character has been found by that name.");

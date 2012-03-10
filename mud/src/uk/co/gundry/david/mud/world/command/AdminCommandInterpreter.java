@@ -231,7 +231,7 @@ public class AdminCommandInterpreter implements CommandInterpreter {
 		if (blueprint.equals("room")){
 			if (thread.getCharacter().getLocation() != Game.getWorld().getRooms().get(0))
 			{ // You really don't want to delete Limbo
-				Room roomToDelete = thread.getCharacter().getLocation();
+				Room roomToDelete = (Room) thread.getCharacter().getLocation();
 				for (Door door: roomToDelete.getDoors())
 				{
 					roomToDelete.objectExited(door);

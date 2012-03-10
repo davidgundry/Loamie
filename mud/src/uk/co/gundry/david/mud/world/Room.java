@@ -11,22 +11,16 @@ import java.util.List;
  * 
  * @author Adam Gundry extended by David Gundry
  */
-public class Room implements Serializable, WorldObject
+public class Room extends WorldObject implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	private String name;
-	private String description;
-	
-	private List<WorldObject> contents = new ArrayList<WorldObject>();
+	private static final int TYPE = 2;
 	
 	/**
 	 * Creates a room without setting any of the variables. The program will probably break if you
-	 * try and add this room to the game world.
+	 * try and add this room to the game world without defining its variables first.
 	 */
-	public Room()
-	{
-		
-	}
+	public Room(){}
 	
 	/**
 	 * Creates a new room with the given name and description.
@@ -36,8 +30,7 @@ public class Room implements Serializable, WorldObject
 	 */
 	public Room(String name, String description)
 	{
-		this.name = name;
-		this.description = description;
+		super(name, description);
 	}
 	
 	/**
@@ -46,66 +39,20 @@ public class Room implements Serializable, WorldObject
 	public void receiveMessage(String text)
 	{
 		for (WorldObject object: contents)
+			object.receiveMessage(text);
+	}
+	
+	/**
+	 * When a message is received from a player, it is passed to the room's contents.
+	 */
+	public void receiveMessageFromPlayer(String text) {
+		for (WorldObject object: contents)
 			object.receiveMessageFromPlayer(text);
 	}
-	
-	/**
-	 * Called when an object enters this room. Adds it to the contents list.
-	 * 
-	 * @param object
-	 */
-	public void objectEntered(WorldObject object)
-	{
-		contents.add(object);		
-		object.receiveMessage("\nYou have entered " + this.name);
-		this.receiveMessage(String.format("%s has entered.", object.getName()));
-	}
-	
-	/**
-	 * Calls when an object leaves this room. Removes it from the contents list.
-	 * @param object
-	 */
-	public void objectExited(WorldObject object)
-	{
-		contents.remove(object);
-		this.receiveMessage(String.format("%s has left.", object.getName()));
-	}
-	
-	/**
-	 * Returns the name of this room.
-	 */
-	public String getName()
-	{
-		return name;
-	}
-	
-	/**
-	 * Returns the description of this room.
-	 */
-	public String getDescription()
-	{
-		return description;
-	}
-	
-	/**
-	 * Sets the name of this room to a string. There should be no spaces,
-	 * but underscores (_) can be used in place of spaces.
-	 */
-	public void setName(String newName){
-		name = newName;
-	}
-	
-	/**
-	 * Sets the description of the room to a string.
-	 */
-	public void setDescription(String newDescription){
-		description = newDescription;
-	}
-	
+
 	public int getType(){
-		return 2;
+		return TYPE;
 	}
-	
 	/**
 	 * Gets the room to describe its contents.
 	 */
@@ -119,26 +66,6 @@ public class Room implements Serializable, WorldObject
 				contentsText += object.getName() + ", ";
 		}
 		return contentsText;
-	}
-	
-	public List<Door> getDoors()
-	{
-		List<Door> doors = new ArrayList<Door>();
-		
-		for (int i=0;i<contents.size();i++)
-			if (contents.get(i).getType() == 3) doors.add((Door) contents.get(i));
-		
-		return doors;
-	}
-	
-	public List<GameCharacter> getGameCharacters()
-	{
-		List<GameCharacter> gcs = new ArrayList<GameCharacter>();
-		
-		for (int i=0;i<contents.size();i++)
-			if (contents.get(i).getType() == GameCharacter.TYPE) gcs.add((GameCharacter) contents.get(i));
-		
-		return gcs;
 	}
 	
 	/**
@@ -167,71 +94,11 @@ public class Room implements Serializable, WorldObject
 			return 0;
 	}
 
-	public WorldObject getContentsByName(String name)
-	{
-	    for (WorldObject object: contents){
-	    	if (object.getName().toLowerCase().equals(name.toLowerCase()))
-	    		return object;
-	    }
-	    for (WorldObject object: contents){
-	    	if (object.getSynonyms() != null)
-		    	for (String text: object.getSynonyms()){
-		    		if (text.toLowerCase().equals(name.toLowerCase()))
-		    			return object;
-	    	}
-	    }
-	    return null;
-	}
-	
-	public boolean moveTo(WorldObject target)
-	{
-		return false;
-	}
-	
-	/**
-	 * At the moment, this doesn't remove the things from the current room, but does move them into Limbo
-	 * @param target
-	 */
-	public void ejectContents(Room target)
-	{ 
-		for (WorldObject object: contents)
-	    	target.objectEntered(object);
-	}
-
-	public List<String> getSynonyms() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Room getLocation() {
-		return this;
-	}
-
 	public void heal(int value) {
 		for (WorldObject object: contents)
 			object.heal(value);
 	}
 
-	/**
-	 * This is intentionally not implemented by Room.
-	 */
-	public int interpretCommand(String text, GameCharacter actor) {return 0;}
-
-	/**
-	 * This is intentionally not implemented by Room.
-	 */
-	public int processCommand(String command) {return 0;}
-
-	/**
-	 * This is intentionally not implemented by Room.
-	 */
-	public void listenToCommand(String command, PlayerCharacter actor) {}
-
-	public void receiveMessageFromPlayer(String text) {
-		for (WorldObject object: contents)
-			object.receiveMessageFromPlayer(text);
-	}
-	
 	public void saveStateToXML(PrintStream ps)
 	{
 		ps.println("	<room>");

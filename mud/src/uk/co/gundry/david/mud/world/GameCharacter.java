@@ -19,27 +19,24 @@ import uk.co.gundry.david.mud.Game;
  * 
  * @author Adam Gundry
  */
-public class GameCharacter implements Serializable, WorldObject
+public class GameCharacter extends WorldObject implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
-	// name cannot be the same as a room (Item drop code)
-	protected String name;	
-	protected String description;	
 	
-	protected List<String> synonyms = new ArrayList<String>();
-	
-	protected Room location;
-	protected Room lastRoom;
+	protected WorldObject lastRoom;
 	int lastRoomID;
 	protected int hitPoints;
 	protected int xp;
 	
 	WorldObject listener;
 
-	private List<WorldObject> contents = new ArrayList<WorldObject>();
+	private static final int TYPE = 0;
 	
-	public static final int TYPE = 0;
+	public GameCharacter()
+	{
+		
+	}
 	
 	/**
 	 * Create a new character with the given name and description
@@ -49,22 +46,15 @@ public class GameCharacter implements Serializable, WorldObject
 	 */
 	public GameCharacter(String name, String description)
 	{
-		this.name = name;
-		this.description = description;
+		super(name, description);
 		this.hitPoints = 10;
 		this.xp = 0;
 		this.listener = null;
 	}
 	
-	public GameCharacter()
-	{
-		
-	}
-	
 	public GameCharacter(String name, String description, int hitPoints)
 	{
-		this.name = name;
-		this.description = description;
+		super(name, description);
 		this.hitPoints = hitPoints;
 		this.xp = 0;
 		this.listener = null;
@@ -72,57 +62,26 @@ public class GameCharacter implements Serializable, WorldObject
 	
 	public GameCharacter(String name, String description, List<String> synonyms)
 	{
-		this.name = name;
-		this.description = description;
-		this.synonyms = synonyms;
+		super(name, description,synonyms);
 		this.hitPoints = 10;
 		this.xp = 0;
 		this.listener = null;
 	}
 	
 	public GameCharacter(String gcName, String gcDesc, List<String> newSyns,int hp, int xp,int lastRm, Room location) {
-		this.name = gcName;
-		this.description = gcDesc;
-		this.synonyms = newSyns;
+		super(gcName, gcDesc,newSyns,location);
 		this.hitPoints = hp;
 		this.xp = xp;
 		this.listener = null;
-		this.location = location;
 		this.lastRoomID = lastRm;
 	}
 
-	/**
-	 * We do nothing with messages received. Subclasses should override this.
-	 */
-	public void receiveMessage(String text)
-	{
-		
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public void setName(String newName){
-		name = newName;
-	}
-	
-	public void setDescription(String newDescription){
-		description = newDescription;
-	}
-	
-	public Room getLocation()
-	{
-		return location;
-	}
-	
-	public Room getLastRoom()
+	public WorldObject getLastRoom()
 	{
 		return lastRoom;
 	}
 	
-	public void setLastRoom(Room lastRoom)
+	public void setLastRoom(WorldObject lastRoom)
 	{
 		this.lastRoom = lastRoom;
 	}
@@ -137,9 +96,10 @@ public class GameCharacter implements Serializable, WorldObject
 		return xp;
 	}
 	
-	public int getType(){
+	public int getType() {
 		return TYPE;
 	}
+	
 	
 	/**
 	 * Moves this character to the given room, notifying the current location and destination
@@ -168,19 +128,19 @@ public class GameCharacter implements Serializable, WorldObject
 	 */
 	public void say(String text)
 	{
-		location.receiveMessage(String.format("%s says, \"%s\"", name, text));
+		location.receiveMessageFromPlayer(String.format("%s says, \"%s\"", name, text));
 	}
 	public void shout(String text)
 	{
-		location.receiveMessage(String.format("%s shouts, \"%s\"", name, text));
+		location.receiveMessageFromPlayer(String.format("%s shouts, \"%s\"", name, text));
 	}
 	public void rpAction(String text)
 	{
-		location.receiveMessage(String.format("%s %s", name, text.trim()));
+		location.receiveMessageFromPlayer(String.format("%s %s", name, text.trim()));
 	}
 	public void ownerlessRpAction(String text)
 	{
-		location.receiveMessage(text);
+		location.receiveMessageFromPlayer(text);
 	}
 	public void look()
 	{
@@ -207,11 +167,6 @@ public class GameCharacter implements Serializable, WorldObject
 		}
 	}
 		
-	public String getDescription()
-	{
-		return this.description;
-	}
-	
 	public String describeContents()
 	{
 		String contentsText = "";
@@ -285,25 +240,12 @@ public class GameCharacter implements Serializable, WorldObject
 		this.receiveMessage(String.format("You have lost a %s.", object.getName()));
 	}
 
-	public List<String> getSynonyms() {
-		return synonyms;
-	}
-
 	public void heal(int value) {
 		this.hitPoints = this.hitPoints + value;
 		if (value > 0)
 			this.receiveMessage("You have been healed " + value + " points.");
 		else 
 			this.receiveMessage("You have been harmed " + -value + " points.");
-		
-	}
-
-	public int processCommand(String command, GameCharacter actor) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void listenToCommand(String command, PlayerCharacter actor) {
 		
 	}
 	
@@ -317,42 +259,7 @@ public class GameCharacter implements Serializable, WorldObject
 		this.listener = listener;
 	}
 
-	/**
-	 * This is overrided by PlayerCharacters (with socket connections), which
-	 * forward the message over the socket.
-	 */
-	public void receiveMessageFromPlayer(String text) {
-		// TODO Auto-generated method stub
-	}
 
-	/**
-	 * Moves this GameCharacter to the room with the specified ID.
-	 * 
-	 * @param roomNo
-	 */
-	public void moveToByID(int roomNo)
-	{
-		roomNo = Math.abs(roomNo);
-		if (roomNo < Game.getWorld().getRooms().size())
-			this.moveTo(Game.getWorld().getRooms().get(roomNo));
-		else
-			this.receiveMessage("That is not a valid room");
-	}
-
-	/**
-	 * Moves this GameCharacter to the room with the specified name.
-	 * 
-	 * @param name
-	 */
-	public void moveToByName(String name)
-	{
-		for (Room place: Game.getWorld().getRooms())
-			if (place.getName().equals(name)){
-				this.moveTo(place);
-				return;
-			}
-		this.receiveMessage("That is not a valid room");
-	}
 	
 	/** 
 	 * Writes all of the information to save in XML format to the supplied PrintStream
@@ -553,6 +460,10 @@ public class GameCharacter implements Serializable, WorldObject
 
 	public void lastRoomFromID() {
 		this.lastRoom = Game.getWorld().getRooms().get(lastRoomID);
+	}
+
+	public static int getStaticType() {
+		return TYPE;
 	}
 	
 }

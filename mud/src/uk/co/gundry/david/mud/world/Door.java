@@ -16,61 +16,42 @@ import uk.co.gundry.david.mud.Game;
  * 
  * @author David Gundry
  */
-public class Door implements WorldObject, Serializable {
-
+public class Door extends WorldObject implements Serializable {
+	private static final int TYPE = 2;
 	private static final long serialVersionUID = 1L;
-	private String name;
-	private String description;
 	private Room target;
 	private String targetName;
 	
 	private List<String> synonyms;
 	
 	public Door(String name, String description, Room target){
-		this.name = name;
-		this.description = description;
+		super(name, description);
 		this.target = target;
 	}
 	
 	public Door(String name, String description, String target, List<String> synonyms){
-		this.name = name;
-		this.description = description;
+		super(name, description,synonyms);
 		this.target = null;
 		this.targetName = target;
-		this.synonyms = synonyms;
 	}
 	
 	public Door(String name, String description, Room target, List<String> synonyms){
-		this.name = name;
-		this.description = description;
+		super(name, description,synonyms);
 		this.target = target;
-		this.synonyms = synonyms;
 	}
 	
 	public Door() {}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getName() {
-		return name;
-	}
 	
 	public Room getTarget(){
 		return target;
 	}
 	
-	public void setName(String newName){
-		name = newName;
+	public int getType() {
+		return TYPE;
 	}
 	
-	public void setDescription(String newDescription){
-		description = newDescription;
-	}
-	
-	public int getType(){
-		return 3;
+	public static int getStaticType() {
+		return TYPE;
 	}
 	
 	public String getTargetName()

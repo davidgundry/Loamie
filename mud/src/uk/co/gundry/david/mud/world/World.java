@@ -19,7 +19,7 @@ import uk.co.gundry.david.mud.world.item.MapItem;
  * 
  * @author David Gundry
  */
-public class World implements WorldObject{
+public class World extends WorldObject{
 
 	private static final long serialVersionUID = 1L;
 	private List<Room> rooms = new ArrayList<Room>();
