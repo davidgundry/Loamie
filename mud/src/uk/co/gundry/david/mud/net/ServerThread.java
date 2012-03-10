@@ -16,14 +16,10 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import uk.co.gundry.david.mud.Game;
-import uk.co.gundry.david.mud.world.World;
 
 
 /**

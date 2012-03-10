@@ -2,7 +2,6 @@ package uk.co.gundry.david.mud.world;
 
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class Room extends WorldObject implements Serializable
 	 */
 	public void receiveMessage(String text)
 	{
-		for (WorldObject object: contents)
+		for (WorldObject object: getContents())
 			object.receiveMessage(text);
 	}
 	
@@ -46,26 +45,12 @@ public class Room extends WorldObject implements Serializable
 	 * When a message is received from a player, it is passed to the room's contents.
 	 */
 	public void receiveMessageFromPlayer(String text) {
-		for (WorldObject object: contents)
+		for (WorldObject object: getContents())
 			object.receiveMessageFromPlayer(text);
 	}
 
 	public int getType(){
 		return TYPE;
-	}
-	/**
-	 * Gets the room to describe its contents.
-	 */
-	public String describeContents()
-	{
-		String contentsText = "";
-		if (contents.size() > 0)
-		{
-			contentsText += "\nContents: ";
-			for (WorldObject object: contents)
-				contentsText += object.getName() + ", ";
-		}
-		return contentsText;
 	}
 	
 	/**
@@ -95,20 +80,20 @@ public class Room extends WorldObject implements Serializable
 	}
 
 	public void heal(int value) {
-		for (WorldObject object: contents)
+		for (WorldObject object: getContents())
 			object.heal(value);
 	}
 
 	public void saveStateToXML(PrintStream ps)
 	{
 		ps.println("	<room>");
-		ps.println("		<name>"+this.name+"</name>");
-		ps.println("		<description>"+this.description+"</description>");
+		ps.println("		<name>"+this.getName()+"</name>");
+		ps.println("		<description>"+this.getDescription()+"</description>");
 		for (Door door: this.getDoors())
 		{
 			door.saveStateToXML(ps);
 		}
-		for (WorldObject cont: this.contents)
+		for (WorldObject cont: this.getContents())
 		{
 			if ((cont.getType() == 0) || (cont.getType() == 1 )){
 				cont.saveStateToXML(ps);

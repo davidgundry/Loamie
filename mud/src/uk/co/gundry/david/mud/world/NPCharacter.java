@@ -137,8 +137,8 @@ public class NPCharacter extends GameCharacter  {
 	
 	public void saveStateToXML(PrintStream ps) {
 		ps.println("<npc>");
-		ps.println("	<name>" + name + "</name>");
-		ps.println("	<description>" + description + "</description>");
+		ps.println("	<name>" + this.getName() + "</name>");
+		ps.println("	<description>" + this.getDescription() + "</description>");
 		if (this.getSynonyms() != null)
 			for (String syn: this.getSynonyms())
 			{

@@ -5,7 +5,7 @@ import uk.co.gundry.david.mud.net.SocketThread;
 /**
  * Represents a character that can be controlled by a human (well, a socket connection, at any rate).
  * Note that the character need not be controlled all the time. This class should only add things related
- * to the socket connection, and any mechanical things should be a part of GameCharacter.
+ * to the socket connection, and any mechanical things should be a part of GameCharacter or above.
  * 
  * @author Adam Gundry extended by David Gundry
  */
@@ -29,13 +29,13 @@ public final class PlayerCharacter extends GameCharacter
 	 * @param gc
 	 */
 	public PlayerCharacter(GameCharacter gc) {
-		this.synonyms = gc.getSynonyms();
-		this.location = gc.getLocation();
+		this.setSynonyms(gc.getSynonyms());
+		this.setLocation(gc.getLocation());
 		this.lastRoom = gc.getLastRoom();
 		this.hitPoints = gc.getHitPoints();
 		this.xp = gc.getXp();
-		this.name = gc.getName();
-		this.description = gc.getDescription();
+		this.setName(gc.getName());
+		this.setDescription(gc.getDescription());
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class PlayerCharacter extends GameCharacter
 	public void playerConnected(SocketThread thread)
 	{
 		this.thread = thread;
-		receiveMessage("Welcome to the game, " + name + "!");
+		receiveMessage("Welcome to the game, " + this.getName() + "!");
 	}
 	
 	/**

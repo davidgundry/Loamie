@@ -15,11 +15,11 @@ import uk.co.gundry.david.mud.Game;
 public class WorldObject implements Serializable
 {
 	private static final int TYPE = -1;
-	protected String name;
-	protected String description;
-	protected WorldObject location;
-	protected List<String> synonyms = new ArrayList<String>();
-	protected List<WorldObject> contents = new ArrayList<WorldObject>();
+	private String name;
+	private String description;
+	private WorldObject location;
+	private List<String> synonyms = new ArrayList<String>();
+	private List<WorldObject> contents = new ArrayList<WorldObject>();
 	
 	
 	private static final long serialVersionUID = 1L;
@@ -33,12 +33,12 @@ public class WorldObject implements Serializable
 	public WorldObject(String name, String description,List<String> synonyms) {
 		this.name = name;
 		this.description = description;
-		this.synonyms = synonyms;
+		this.setSynonyms(synonyms);
 	}
 	public WorldObject(String name, String description,List<String> synonyms,WorldObject location) {
 		this.name = name;
 		this.description = description;
-		this.synonyms = synonyms;
+		this.setSynonyms(synonyms);
 		this.location = location;
 	}
 
@@ -100,10 +100,10 @@ public class WorldObject implements Serializable
 	 */
 	public String describeContents() {
 		String contentsText = "";
-		if (contents.size() > 0)
+		if (getContents().size() > 0)
 		{
 			contentsText += "\nContents: ";
-			for (WorldObject object: contents)
+			for (WorldObject object: getContents())
 				contentsText += object.getName() + ", ";
 		}
 		return contentsText;
@@ -121,17 +121,7 @@ public class WorldObject implements Serializable
 	public int getType() {
 		return TYPE;
 	}
-	
-	/**
-	 * Moves object to specified location. Returns true on success, false if for any reason the
-	 * object can't be moved there. (Eg. the location doesn'e exist)
-	 * 
-	 * @param location - the target to move to
-	 */
-	public boolean moveTo(WorldObject location) {
-		return false;
-	}
-	
+		
 	/**
 	 * Called when an object that the WorldObject is containing leaves.
 	 * Must remove the object from the list of contents.
@@ -139,7 +129,7 @@ public class WorldObject implements Serializable
 	 * @param object - the object that has left
 	 */
 	public void objectExited(WorldObject object) {
-		contents.remove(object);
+		getContents().remove(object);
 		this.receiveMessage(String.format("%s has left.", object.getName()));
 	}
 	
@@ -150,7 +140,7 @@ public class WorldObject implements Serializable
 	 * @param object - the object that entered
 	 */
 	public void objectEntered(WorldObject object) {
-		contents.add(object);		
+		getContents().add(object);		
 		object.receiveMessage("\nYou have entered " + this.name);
 		this.receiveMessage(String.format("%s has entered.", object.getName()));
 	}
@@ -169,7 +159,7 @@ public class WorldObject implements Serializable
 	 * In the case of Rooms, they return themselves.
 	 */
 	public WorldObject getLocation() {
-		return null;
+		return location;
 	}
 
 	/**
@@ -247,11 +237,11 @@ public class WorldObject implements Serializable
 	 */
 	public WorldObject getContentsByName(String name)
 	{
-	    for (WorldObject object: contents){
+	    for (WorldObject object: getContents()){
 	    	if (object.getName().toLowerCase().equals(name.toLowerCase()))
 	    		return object;
 	    }
-	    for (WorldObject object: contents){
+	    for (WorldObject object: getContents()){
 	    	if (object.getSynonyms() != null)
 		    	for (String text: object.getSynonyms()){
 		    		if (text.toLowerCase().equals(name.toLowerCase()))
@@ -268,8 +258,8 @@ public class WorldObject implements Serializable
 	{
 		List<Door> doors = new ArrayList<Door>();
 		
-		for (int i=0;i<contents.size();i++)
-			if (contents.get(i).getType() == 3) doors.add((Door) contents.get(i));
+		for (int i=0;i<getContents().size();i++)
+			if (getContents().get(i).getType() == Door.getStaticType()) doors.add((Door) getContents().get(i));
 		
 		return doors;
 	}
@@ -281,8 +271,8 @@ public class WorldObject implements Serializable
 	{
 		List<GameCharacter> gcs = new ArrayList<GameCharacter>();
 		
-		for (int i=0;i<contents.size();i++)
-			if (contents.get(i).getType() == GameCharacter.getStaticType()) gcs.add((GameCharacter) contents.get(i));
+		for (int i=0;i<getContents().size();i++)
+			if (getContents().get(i).getType() == GameCharacter.getStaticType()) gcs.add((GameCharacter) getContents().get(i));
 		
 		return gcs;
 	}
@@ -293,8 +283,36 @@ public class WorldObject implements Serializable
 	 */
 	public void ejectContents(WorldObject target)
 	{ 
-		for (WorldObject object: contents)
+		for (WorldObject object: getContents())
 	    	target.objectEntered(object);
+	}
+	
+	/**
+	 * Moves this object to the given target, notifying the current location and destination
+	 * as appropriate.
+	 * 
+	 * @param location
+	 */
+	public boolean moveTo(WorldObject location)
+	{
+		if (location != null)
+		{
+			if (this.location != null)
+				this.location.objectExited(this);
+			this.location = location;
+			location.objectEntered(this);
+			return true;
+		}
+		return false;
+	}
+	public List<WorldObject> getContents() {
+		return contents;
+	}
+	public void setContents(List<WorldObject> contents) {
+		this.contents = contents;
+	}
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 }
 

@@ -22,8 +22,6 @@ public class Door extends WorldObject implements Serializable {
 	private Room target;
 	private String targetName;
 	
-	private List<String> synonyms;
-	
 	public Door(String name, String description, Room target){
 		super(name, description);
 		this.target = target;
@@ -59,10 +57,6 @@ public class Door extends WorldObject implements Serializable {
 		return targetName;
 	}
 	
-	public String describeContents(){
-		return "";
-	}
-	
 	public boolean findTarget(List<Room> roomList){
 		boolean foundIt = false;
 		for (Room room: roomList)
@@ -89,56 +83,6 @@ public class Door extends WorldObject implements Serializable {
 			return 1;
 		} else
 			return 0;
-	}
-	
-	public boolean moveTo(WorldObject target)
-	{
-		return false;
-
-	}
-	
-	public void objectEntered(WorldObject object)
-	{
-
-	}
-
-	public void objectExited(WorldObject object)
-	{
-
-	}
-
-	public void receiveMessage(String text) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public List<String> getSynonyms() {
-		return synonyms;
-	}
-
-	public WorldObject getLocation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void heal(int value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public int processCommand(String command, GameCharacter actor) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void listenToCommand(String command, PlayerCharacter actor) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void receiveMessageFromPlayer(String text) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void saveStateToXML(PrintStream ps) {
@@ -215,7 +159,7 @@ public class Door extends WorldObject implements Serializable {
 	                		{
 		                    	Element synElement = (Element)synList.item(l);
 		                    	NodeList childSynList = synElement.getChildNodes();
-		                //    	Game.logMessage("	Door : Synonym : " + ((Node)synList.item(0)).getNodeValue().trim());
+		                    	Game.logMessage("	Door : Synonym : " + (((Node)childSynList.item(0)).getNodeValue().trim()));
 			                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
 	                		}
 	                    }

@@ -27,7 +27,7 @@ public class Item extends WorldObject implements Serializable {
 	public Item(String name, String description, WorldObject location)
 	{
 		super(name,description);
-		this.location = location;
+		setLocation(location);
 	}
 	
 	public Item(String name, String description, List<String> synonyms)
@@ -54,22 +54,6 @@ public class Item extends WorldObject implements Serializable {
 	public Item() {
 		super();
 	}
-
-	public String describeContents() {
-		String contentsText = "";
-		if (contents.size() > 0)
-		{
-			contentsText += "\nContents: ";
-			for (WorldObject object: contents)
-				contentsText += object.getName() + ", ";
-		}
-		return contentsText;
-	}
-
-	
-	public WorldObject getLocation() {
-		return location;
-	}
 	
 	public void setCommands(HashMap<String,String> commands){
 		this.commands = commands;
@@ -79,26 +63,6 @@ public class Item extends WorldObject implements Serializable {
 		return TYPE;
 	}
 	
-	public boolean moveTo(WorldObject location) {
-		if (location != null)
-		{
-			if (this.location != null)
-				this.location.objectExited(this);
-			this.location = location;
-			location.objectEntered(this);
-			return true;
-		}
-		return false;
-	}
-	
-	public void moveTo(Room location) {
-		if (this.location != null)
-			this.location.objectExited(this);
-		this.location = location;
-		location.objectEntered(this);
-	}
-
-
 	/**
 	 * Called when the server does not immediately know what a verb does.
 	 * Items which are named after the verb are queried to see if they have
@@ -149,8 +113,8 @@ public class Item extends WorldObject implements Serializable {
 			{
 				ps.println("			<synonym>"+syn+"</synonym>");
 			}
-		if (this.contents != null)
-			for (WorldObject cont: this.contents)
+		if (this.getContents() != null)
+			for (WorldObject cont: this.getContents())
 			{
 				ps.println("			<contains>"+cont.getName()+"</contains>");
 			}

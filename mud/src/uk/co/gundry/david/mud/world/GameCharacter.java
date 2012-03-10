@@ -100,10 +100,9 @@ public class GameCharacter extends WorldObject implements Serializable
 		return TYPE;
 	}
 	
-	
 	/**
 	 * Moves this character to the given room, notifying the current location and destination
-	 * as appropriate.
+	 * as appropriate, and updating lastRoom.
 	 * 
 	 * @param location
 	 */
@@ -111,10 +110,10 @@ public class GameCharacter extends WorldObject implements Serializable
 	{
 		if (location != null)
 		{
-			if (this.location != null)
-				this.location.objectExited(this);
-			this.lastRoom = this.location;
-			this.location = (Room) location;
+			if (this.getLocation() != null)
+				this.getLocation().objectExited(this);
+			this.lastRoom = this.getLocation();
+			setLocation(location);
 			location.objectEntered(this);
 			return true;
 		}
@@ -128,23 +127,23 @@ public class GameCharacter extends WorldObject implements Serializable
 	 */
 	public void say(String text)
 	{
-		location.receiveMessageFromPlayer(String.format("%s says, \"%s\"", name, text));
+		getLocation().receiveMessageFromPlayer(String.format("%s says, \"%s\"", this.getName(), text));
 	}
 	public void shout(String text)
 	{
-		location.receiveMessageFromPlayer(String.format("%s shouts, \"%s\"", name, text));
+		getLocation().receiveMessageFromPlayer(String.format("%s shouts, \"%s\"", this.getName(), text));
 	}
 	public void rpAction(String text)
 	{
-		location.receiveMessageFromPlayer(String.format("%s %s", name, text.trim()));
+		getLocation().receiveMessageFromPlayer(String.format("%s %s", this.getName(), text.trim()));
 	}
 	public void ownerlessRpAction(String text)
 	{
-		location.receiveMessageFromPlayer(text);
+		getLocation().receiveMessageFromPlayer(text);
 	}
 	public void look()
 	{
-		receiveMessage(location.getName() + "\n" + location.getDescription() + "\n" + location.describeContents().replace(this.name+",", ""));
+		receiveMessage(getLocation().getName() + "\n" + getLocation().getDescription() + "\n" + getLocation().describeContents().replace(this.getName()+",", ""));
 	}
 	public void objectLook(String text)
 	{
@@ -152,7 +151,7 @@ public class GameCharacter extends WorldObject implements Serializable
 		{
 			receiveMessage(this.getDescription() + "\n" + this.describeContents());
 		} else {
-			WorldObject object = location.getContentsByName(text);
+			WorldObject object = getLocation().getContentsByName(text);
 			if (object != null)
 				receiveMessage(object.getDescription() + "\n" + object.describeContents());
 			else {
@@ -170,10 +169,10 @@ public class GameCharacter extends WorldObject implements Serializable
 	public String describeContents()
 	{
 		String contentsText = "";
-		if (contents.size() > 0)
+		if (getContents().size() > 0)
 		{
 			contentsText += "\nInventory: ";
-			for (WorldObject object: contents)
+			for (WorldObject object: getContents())
 				contentsText += object.getName() + ", ";
 		}
 		else
@@ -194,11 +193,11 @@ public class GameCharacter extends WorldObject implements Serializable
 
 	public WorldObject getContentsByName(String name)
 	{
-	    for (WorldObject object: contents){
+	    for (WorldObject object: getContents()){
 	    	if (object.getName().toLowerCase().equals(name.toLowerCase()))
 	    		return object;
 	    }
-	    for (WorldObject object: contents){
+	    for (WorldObject object: getContents()){
 	    	if (object.getSynonyms() != null)
 		    	for (String text: object.getSynonyms()){
 		    		if (text.toLowerCase().equals(name.toLowerCase()))
@@ -226,7 +225,7 @@ public class GameCharacter extends WorldObject implements Serializable
 	 */
 	public void objectEntered(WorldObject object)
 	{
-		contents.add(object);		
+		getContents().add(object);		
 		this.receiveMessage(String.format("You have gained a %s.", object.getName()));
 	}
 	
@@ -236,7 +235,7 @@ public class GameCharacter extends WorldObject implements Serializable
 	 */
 	public void objectExited(WorldObject object)
 	{
-		contents.remove(object);
+		getContents().remove(object);
 		this.receiveMessage(String.format("You have lost a %s.", object.getName()));
 	}
 
@@ -259,22 +258,20 @@ public class GameCharacter extends WorldObject implements Serializable
 		this.listener = listener;
 	}
 
-
-	
 	/** 
 	 * Writes all of the information to save in XML format to the supplied PrintStream
 	 */
 	public void saveStateToXML(PrintStream ps) {
 		
 		ps.println("		<game-character>");
-		ps.println("			<name>"+this.name+"</name>");
-		ps.println("			<description>"+this.description+"</description>");
+		ps.println("			<name>"+this.getName()+"</name>");
+		ps.println("			<description>"+this.getDescription()+"</description>");
 		ps.println("			<hp>" + hitPoints + "</hp>");
 		ps.println("			<xp>" + xp + "</xp>");
 		boolean foundIt = false;
 		for (int i=0;i<Game.getWorld().getRooms().size();i++)
 		{
-			if (Game.getWorld().getRooms().get(i).getName().equals(location.getName()))
+			if (Game.getWorld().getRooms().get(i).getName().equals(getLocation().getName()))
 			{
 				foundIt = true;
 				ps.println("			<location>" + i + "</location>");
@@ -294,12 +291,12 @@ public class GameCharacter extends WorldObject implements Serializable
 				break;
 		}
 		
-		for (String syn: synonyms)
+		for (String syn: this.getSynonyms())
 		{
 			ps.println("			<synonym>"+ syn + "</synonym>");
 		}
 		
-		for (WorldObject cont: this.contents)
+		for (WorldObject cont: this.getContents())
 		{
 			cont.saveStateToXML(ps);
 		}
@@ -326,7 +323,7 @@ public class GameCharacter extends WorldObject implements Serializable
 		try {
 			targetName = st.nextToken();
 		} catch (NoSuchElementException ex) {
-			this.location.heal(value);
+			this.getLocation().heal(value);
 		}
 		
 		if (targetName.equals("room"))
@@ -338,14 +335,6 @@ public class GameCharacter extends WorldObject implements Serializable
 
 	}
 
-	public List<WorldObject> getContents() {
-		return contents;
-	}
-
-	public void setContents(List<WorldObject> contents) {
-		this.contents = contents;
-	}
-	    
 	public static List<GameCharacter> loadStateFromXML(Element firstRoomElement)
 	{
 		NodeList gcList = firstRoomElement.getElementsByTagName("game-character");
