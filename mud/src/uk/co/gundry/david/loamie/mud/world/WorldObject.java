@@ -28,7 +28,7 @@ import uk.co.gundry.david.loamie.mud.Game;
 /**
  * Represents an abstract "thing" in the world tree.
  * 
- * @author Adam Gundry
+ * @author Adam Gundry extended by David Gundry
  */
 public class WorldObject implements Serializable
 {

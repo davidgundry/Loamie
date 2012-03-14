@@ -35,7 +35,7 @@ import uk.co.gundry.david.loamie.mud.Game;
  * Represents a character in the game. Subclasses may represent player characters or
  * those with some kind of AI control.
  * 
- * @author Adam Gundry
+ * @author Adam Gundry extended by David Gundry
  */
 public class GameCharacter extends WorldObject implements Serializable
 {
