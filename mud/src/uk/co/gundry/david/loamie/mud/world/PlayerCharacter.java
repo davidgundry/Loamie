@@ -1,6 +1,6 @@
-package uk.co.gundry.david.mud.world;
+package uk.co.gundry.david.loamie.mud.world;
 
-import uk.co.gundry.david.mud.net.SocketThread;
+import uk.co.gundry.david.loamie.mud.net.SocketThread;
 
 /**
  * Represents a character that can be controlled by a human (well, a socket connection, at any rate).

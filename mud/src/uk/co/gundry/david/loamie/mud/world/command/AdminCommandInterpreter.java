@@ -1,13 +1,13 @@
-package uk.co.gundry.david.mud.world.command;
+package uk.co.gundry.david.loamie.mud.world.command;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import uk.co.gundry.david.mud.Game;
-import uk.co.gundry.david.mud.net.SocketThread;
-import uk.co.gundry.david.mud.world.Door;
-import uk.co.gundry.david.mud.world.Room;
-import uk.co.gundry.david.mud.world.WorldObject;
+import uk.co.gundry.david.loamie.mud.Game;
+import uk.co.gundry.david.loamie.mud.net.SocketThread;
+import uk.co.gundry.david.loamie.mud.world.Door;
+import uk.co.gundry.david.loamie.mud.world.Room;
+import uk.co.gundry.david.loamie.mud.world.WorldObject;
 
 public class AdminCommandInterpreter implements CommandInterpreter {
 

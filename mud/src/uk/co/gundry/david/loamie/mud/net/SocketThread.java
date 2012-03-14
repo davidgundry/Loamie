@@ -1,4 +1,4 @@
-package uk.co.gundry.david.mud.net;
+package uk.co.gundry.david.loamie.mud.net;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,12 +8,12 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import uk.co.gundry.david.mud.Game;
-import uk.co.gundry.david.mud.world.PlayerCharacter;
-import uk.co.gundry.david.mud.world.WorldObject;
-import uk.co.gundry.david.mud.world.command.AdminCommandInterpreter;
-import uk.co.gundry.david.mud.world.command.PlayerCommandInterpreter;
-import uk.co.gundry.david.mud.world.command.UnLoggedInCommandInterpreter;
+import uk.co.gundry.david.loamie.mud.Game;
+import uk.co.gundry.david.loamie.mud.world.PlayerCharacter;
+import uk.co.gundry.david.loamie.mud.world.WorldObject;
+import uk.co.gundry.david.loamie.mud.world.command.AdminCommandInterpreter;
+import uk.co.gundry.david.loamie.mud.world.command.PlayerCommandInterpreter;
+import uk.co.gundry.david.loamie.mud.world.command.UnLoggedInCommandInterpreter;
 
 
 /**

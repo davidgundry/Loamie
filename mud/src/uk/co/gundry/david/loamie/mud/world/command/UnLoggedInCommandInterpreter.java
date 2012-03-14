@@ -1,10 +1,10 @@
-package uk.co.gundry.david.mud.world.command;
+package uk.co.gundry.david.loamie.mud.world.command;
 
-import uk.co.gundry.david.mud.Game;
-import uk.co.gundry.david.mud.net.SocketThread;
-import uk.co.gundry.david.mud.world.GameCharacter;
-import uk.co.gundry.david.mud.world.PlayerCharacter;
-import uk.co.gundry.david.mud.world.Room;
+import uk.co.gundry.david.loamie.mud.Game;
+import uk.co.gundry.david.loamie.mud.net.SocketThread;
+import uk.co.gundry.david.loamie.mud.world.GameCharacter;
+import uk.co.gundry.david.loamie.mud.world.PlayerCharacter;
+import uk.co.gundry.david.loamie.mud.world.Room;
 
 public class UnLoggedInCommandInterpreter implements CommandInterpreter {
 

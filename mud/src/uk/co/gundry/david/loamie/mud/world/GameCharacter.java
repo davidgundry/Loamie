@@ -1,4 +1,4 @@
-package uk.co.gundry.david.mud.world;
+package uk.co.gundry.david.loamie.mud.world;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import uk.co.gundry.david.mud.Game;
+import uk.co.gundry.david.loamie.mud.Game;
 
 /**
  * Represents a character in the game. Subclasses may represent player characters or

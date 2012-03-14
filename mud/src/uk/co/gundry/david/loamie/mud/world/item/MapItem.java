@@ -1,4 +1,4 @@
-package uk.co.gundry.david.mud.world.item;
+package uk.co.gundry.david.loamie.mud.world.item;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -9,11 +9,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import uk.co.gundry.david.mud.Game;
-import uk.co.gundry.david.mud.world.GameCharacter;
-import uk.co.gundry.david.mud.world.Item;
-import uk.co.gundry.david.mud.world.PlayerCharacter;
-import uk.co.gundry.david.mud.world.WorldObject;
+import uk.co.gundry.david.loamie.mud.Game;
+import uk.co.gundry.david.loamie.mud.world.GameCharacter;
+import uk.co.gundry.david.loamie.mud.world.Item;
+import uk.co.gundry.david.loamie.mud.world.PlayerCharacter;
+import uk.co.gundry.david.loamie.mud.world.WorldObject;
 
 public class MapItem extends Item implements Serializable {
 	

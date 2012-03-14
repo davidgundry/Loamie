@@ -1,4 +1,4 @@
-package uk.co.gundry.david.mud.world;
+package uk.co.gundry.david.loamie.mud.world;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import uk.co.gundry.david.mud.ScriptInterpreter;
-import uk.co.gundry.david.mud.world.npc.Dialogue;
+import uk.co.gundry.david.loamie.mud.ScriptInterpreter;
+import uk.co.gundry.david.loamie.mud.world.npc.Dialogue;
 
 /**
  * A Non-Player Character is an extension of a GameCharacter that gives the character dialogues, and

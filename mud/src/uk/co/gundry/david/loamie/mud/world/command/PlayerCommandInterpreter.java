@@ -1,6 +1,6 @@
-package uk.co.gundry.david.mud.world.command;
+package uk.co.gundry.david.loamie.mud.world.command;
 
-import uk.co.gundry.david.mud.net.SocketThread;
+import uk.co.gundry.david.loamie.mud.net.SocketThread;
 
 public class PlayerCommandInterpreter implements CommandInterpreter {
 

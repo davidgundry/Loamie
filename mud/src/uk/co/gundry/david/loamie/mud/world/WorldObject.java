@@ -1,11 +1,11 @@
-package uk.co.gundry.david.mud.world;
+package uk.co.gundry.david.loamie.mud.world;
 
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.co.gundry.david.mud.Game;
+import uk.co.gundry.david.loamie.mud.Game;
 
 /**
  * Represents an abstract "thing" in the world tree.

@@ -1,4 +1,4 @@
-package uk.co.gundry.david.mud.net;
+package uk.co.gundry.david.loamie.mud.net;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.*;
 
-import uk.co.gundry.david.mud.Game;
+import uk.co.gundry.david.loamie.mud.Game;
 
 
 /**

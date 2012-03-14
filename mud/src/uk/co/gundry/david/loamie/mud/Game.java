@@ -1,4 +1,4 @@
-package uk.co.gundry.david.mud;
+package uk.co.gundry.david.loamie.mud;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,9 +13,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import uk.co.gundry.david.mud.net.ServerThread;
-import uk.co.gundry.david.mud.world.PlayerCharacter;
-import uk.co.gundry.david.mud.world.World;
+import uk.co.gundry.david.loamie.mud.net.ServerThread;
+import uk.co.gundry.david.loamie.mud.world.PlayerCharacter;
+import uk.co.gundry.david.loamie.mud.world.World;
 
 /**
  * Overall control of the game server.
