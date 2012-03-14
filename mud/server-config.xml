@@ -4,6 +4,7 @@
   <world>alpha</world>
   
   <welcome-message>Welcome to the server!
+This server is running the Loamie MUD Engine
 Type help for a list of commands.
 Type login *name* to play</welcome-message>
 
