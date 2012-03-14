@@ -1,0 +1,49 @@
+<world>
+  <welcome-message>This could tell you some current events within the game world!</welcome-message>
+  <goodbye-message>I hope you had fun playing! Come back soon!</goodbye-message>
+  
+  <room>
+    <name>Limbo</name>
+    <description>This is the limbo space. You shouldn't be able to see this. If you can, something has gone wrong.</description>
+    <door>
+      <name>Escape_Hatch</name>
+      <description>This door takes you back to the world</description>
+      <target>Main_Room</target>
+      <synonym>hatch</synonym>
+    </door>
+  </room>
+  
+  <room>
+    <name>Main_Room</name>
+    <description>This is the starting room</description>
+    <door>
+      <name>Fancy_Door</name>
+      <description>A big fancy door that'll take you to the second room.</description>
+      <target>Second_Room</target>
+    </door>
+    <item>
+      <name>Red_Herring</name>
+      <description>It's a red herring.</description>
+      <synonym>herring</synonym>
+      <command>
+	<label>eat</label>
+	<action>say Please don't eat me!</action>
+      </command>
+      <command>
+	<label>throw</label>
+	<action>message The herring returns to you like a boomerang</action>
+      </command>
+    </item>
+  </room>
+  
+  <room>
+    <name>Second_Room</name>
+    <description>This is the second room</description>
+    <door>
+      <target>Main_Room</target>
+      <name>Fancy_Door</name>
+      <description>A big fancy door that leads back to the first room.</description>
+    </door>
+  </room>
+  
+</world>
