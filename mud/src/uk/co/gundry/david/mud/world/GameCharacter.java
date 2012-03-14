@@ -339,7 +339,8 @@ public class GameCharacter extends WorldObject implements Serializable
 	{
 		NodeList gcList = firstRoomElement.getElementsByTagName("game-character");
         int totalItems = gcList.getLength();
-        Game.logMessage("Number of gcs read: " + totalItems);
+        if (Game.isDebug())
+        	Game.logMessage("Number of gcs read: " + totalItems);
         
         List<GameCharacter> newGCs = new ArrayList<GameCharacter>();
         
@@ -361,7 +362,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     Element itemNameElement = (Element)itemNameList.item(0);
 
                     NodeList textItemNameList =  itemNameElement.getChildNodes();
-                    Game.logMessage("	GC : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	GC : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
                     String gcName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
 
                     //-------
@@ -369,7 +371,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     Element itemDescElement = (Element)itemDescList.item(0);
 
                     NodeList textItemDescList =  itemDescElement.getChildNodes();
-                    Game.logMessage("	GC : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	GC : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
                     String gcDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
                     
                     //-------
@@ -377,7 +380,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     Element nElement = (Element)nList.item(0);
 
                     NodeList tnList =  nElement.getChildNodes();
-                    Game.logMessage("	GC : XP : " + ((Node)tnList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	GC : XP : " + ((Node)tnList.item(0)).getNodeValue().trim());
                     int xp = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
                    
                     //-------
@@ -385,7 +389,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     nElement = (Element)nList.item(0);
 
                     tnList =  nElement.getChildNodes();
-                    Game.logMessage("	GC : HP : " + ((Node)tnList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	GC : HP : " + ((Node)tnList.item(0)).getNodeValue().trim());
                     int hp = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
                    
                     
@@ -396,7 +401,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     {
 	                    nElement = (Element)nList.item(0);
 	                    tnList =  nElement.getChildNodes();
-	                    Game.logMessage("	GC : Location : " + ((Node)tnList.item(0)).getNodeValue().trim());
+	                    if (Game.isDebug())
+	        	        	Game.logMessage("	GC : Location : " + ((Node)tnList.item(0)).getNodeValue().trim());
 	                    int loc = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
 	                    gcLoc = Game.getWorld().getRooms().get(loc);
                     }
@@ -413,7 +419,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     {
 	                    nElement = (Element)nList.item(0);
 	                    tnList =  nElement.getChildNodes();
-	                    Game.logMessage("	GC : Last Room : " + ((Node)tnList.item(0)).getNodeValue().trim());
+	                    if (Game.isDebug())
+	        	        	Game.logMessage("	GC : Last Room : " + ((Node)tnList.item(0)).getNodeValue().trim());
 	                    gcLastRm = Integer.parseInt(((Node)tnList.item(0)).getNodeValue().trim());
                     }
                     else
@@ -425,7 +432,8 @@ public class GameCharacter extends WorldObject implements Serializable
                     //----
                     NodeList synList = firstgcElement.getElementsByTagName("synonym");
 		            int totalSyns = synList.getLength();
-		            Game.logMessage("Number of synonyms read: " + totalSyns);
+		            if (Game.isDebug())
+			        	Game.logMessage("Number of synonyms read: " + totalSyns);
                     
 		            List<String> newSyns = new ArrayList<String>();
 		            

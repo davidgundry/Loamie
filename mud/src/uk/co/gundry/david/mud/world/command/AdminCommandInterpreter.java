@@ -210,6 +210,10 @@ public class AdminCommandInterpreter implements CommandInterpreter {
 			if (thread.getCharacter().getLocation().getContentsByName(targetName) != null){
 				thread.getCharacter().getLocation().getContentsByName(targetName).setDescription(blueprint);
 				thread.getCharacter().getLocation().getContentsByName(targetName).setName(editName);
+			}
+			else if (thread.getCharacter().getLocation().getName().equals(targetName)){
+				thread.getCharacter().getLocation().setDescription(blueprint);
+				thread.getCharacter().getLocation().setName(editName);
 			} else
 				thread.sendMessage("Cannot find " +targetName);
 			return;

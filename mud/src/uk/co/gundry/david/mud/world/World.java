@@ -74,7 +74,8 @@ public class World extends WorldObject{
 	        
 	        NodeList listOfRooms = doc.getElementsByTagName("room");
 	        int totalRooms = listOfRooms.getLength();
-	        Game.logMessage("Number of rooms read: " + totalRooms);
+	        if (Game.isDebug())
+	        	Game.logMessage("Number of rooms read: " + totalRooms);
 	
 	        for(int s=0; s<listOfRooms.getLength() ; s++){
 	
@@ -89,7 +90,8 @@ public class World extends WorldObject{
 	                Element nameElement = (Element)nameList.item(0);
 	
 	                NodeList textNameList =  nameElement.getChildNodes();
-	                Game.logMessage("Name : " + ((Node)textNameList.item(0)).getNodeValue().trim());
+	                if (Game.isDebug())
+	    	        	Game.logMessage("Name : " + ((Node)textNameList.item(0)).getNodeValue().trim());
 	                String thisName = ((Node)textNameList.item(0)).getNodeValue().trim();
 	
 	                //-------
@@ -97,7 +99,8 @@ public class World extends WorldObject{
 	                Element descriptionElement = (Element)descriptionList.item(0);
 	
 	                NodeList textDescList = descriptionElement.getChildNodes();
-	                Game.logMessage("Description : " + ((Node)textDescList.item(0)).getNodeValue().trim());
+	                if (Game.isDebug())
+	    	        	Game.logMessage("Description : " + ((Node)textDescList.item(0)).getNodeValue().trim());
 	                String thisDesc = ((Node)textDescList.item(0)).getNodeValue().trim();
 	
 	                Game.getWorld().getRooms().add(new Room(thisName,thisDesc));

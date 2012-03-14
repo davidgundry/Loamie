@@ -26,8 +26,8 @@ Many objects in the world accept many more commands, you'll just have to find th
   
   <help-admin>Admin Commands:
 goto [roomNo]
-create [room/door to [roomNo]] [name] [description]
-edit [room/name] [newName] [newDescription]
+create [room/door to roomID] [name] [description]
+edit [room roomID/name] [newName] [newDescription]
 delete [room/name]
 eject [name/all] to [roomNo]</help-admin>
 

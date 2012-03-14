@@ -144,7 +144,8 @@ public class Item extends WorldObject implements Serializable {
 	{
 		NodeList itemList = firstRoomElement.getElementsByTagName("item");
         int totalItems = itemList.getLength();
-        Game.logMessage("Number of items read: " + totalItems);
+        if (Game.isDebug())
+        	Game.logMessage("Number of items read: " + totalItems);
         
         List<Item> newItems = new ArrayList<Item>();
         
@@ -166,7 +167,8 @@ public class Item extends WorldObject implements Serializable {
                     Element itemNameElement = (Element)itemNameList.item(0);
 
                     NodeList textItemNameList =  itemNameElement.getChildNodes();
-                    Game.logMessage("	Item : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	Item : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
                     String itemName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
 
                     //-------
@@ -174,14 +176,16 @@ public class Item extends WorldObject implements Serializable {
                     Element itemDescElement = (Element)itemDescList.item(0);
 
                     NodeList textItemDescList =  itemDescElement.getChildNodes();
-                    Game.logMessage("	Item : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	Item : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
                     String itemDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
                     
                    
                     //----
                     NodeList synList = firstItemElement.getElementsByTagName("synonym");
 		            int totalSyns = synList.getLength();
-		            Game.logMessage("Number of synonyms read: " + totalSyns);
+		            if (Game.isDebug())
+			        	Game.logMessage("Number of synonyms read: " + totalSyns);
                     
 		            List<String> newSyns = new ArrayList<String>();
 		            
@@ -198,7 +202,8 @@ public class Item extends WorldObject implements Serializable {
                     //----
                     NodeList commList = firstItemElement.getElementsByTagName("command");
 		            int totalComms = commList.getLength();
-		            Game.logMessage("Number of commands read: " + totalComms);
+		            if (Game.isDebug())
+			        	Game.logMessage("Number of commands read: " + totalComms);
                     
 		            Map<String,String> newComms = new HashMap<String,String>();
 		            
@@ -215,7 +220,8 @@ public class Item extends WorldObject implements Serializable {
 			                    Element commLabelElement = (Element)commLabelList.item(0);
 
 			                    NodeList textLabelCommList =  commLabelElement.getChildNodes();
-			                    Game.logMessage("	Item : Command : Label :" + ((Node)textLabelCommList.item(0)).getNodeValue().trim());
+			                    if (Game.isDebug())
+			        	        	Game.logMessage("	Item : Command : Label :" + ((Node)textLabelCommList.item(0)).getNodeValue().trim());
 			                    String commLabel = ((Node)textLabelCommList.item(0)).getNodeValue().trim();
 			                    
 			                    //-------
@@ -223,7 +229,8 @@ public class Item extends WorldObject implements Serializable {
 			                    Element commActionElement = (Element)commActionList.item(0);
 
 			                    NodeList textActionCommList =  commActionElement.getChildNodes();
-			                    Game.logMessage("	Item : Command : Action : " + ((Node)textActionCommList.item(0)).getNodeValue().trim());
+			                    if (Game.isDebug())
+			        	        	Game.logMessage("	Item : Command : Action : " + ((Node)textActionCommList.item(0)).getNodeValue().trim());
 			                    String commAction = ((Node)textActionCommList.item(0)).getNodeValue().trim();
 			                    
 			                    newComms.put(commLabel, commAction);

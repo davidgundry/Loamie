@@ -64,6 +64,11 @@ public final class Game
 	 */
 	private static boolean verbose = true;	
 	/**
+	 * When the server is running in debug mode, it prints more (mostly unnecesary) information
+	 * for debugging purposes.
+	 */
+	private static boolean debug = false;	
+	/**
 	 * This is the world currently running on the server.
 	 */
 	private static World world;
@@ -250,7 +255,7 @@ public final class Game
 	 */
 	public static void logMessage(String message)
 	{	
-		if (verbose)
+		if (isVerbose())
 			System.out.println(message);
 	}
 	
@@ -339,5 +344,13 @@ public final class Game
 	 */
 	public static int getMaxConnections() {
 		return maxConnections;
+	}
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static boolean isVerbose() {
+		return verbose;
 	}
 }

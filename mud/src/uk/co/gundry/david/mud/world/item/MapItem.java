@@ -121,7 +121,8 @@ public class MapItem extends Item implements Serializable {
 	{
 		NodeList itemList = firstRoomElement.getElementsByTagName("mapitem");
         int totalItems = itemList.getLength();
-        Game.logMessage("Number of mapitems read: " + totalItems);
+        if (Game.isDebug())
+        	 Game.logMessage("Number of mapitems read: " + totalItems);
         
         List<Item> newItems = new ArrayList<Item>();
         
@@ -143,7 +144,8 @@ public class MapItem extends Item implements Serializable {
                     Element itemNameElement = (Element)itemNameList.item(0);
 
                     NodeList textItemNameList =  itemNameElement.getChildNodes();
-                    Game.logMessage("	Item : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	Item : Name : " + ((Node)textItemNameList.item(0)).getNodeValue().trim());
                     String itemName = ((Node)textItemNameList.item(0)).getNodeValue().trim();
 
                     //-------
@@ -151,7 +153,8 @@ public class MapItem extends Item implements Serializable {
                     Element itemDescElement = (Element)itemDescList.item(0);
 
                     NodeList textItemDescList =  itemDescElement.getChildNodes();
-                    Game.logMessage("	Item : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	Item : Description : " + ((Node)textItemDescList.item(0)).getNodeValue().trim());
                     String itemDesc = ((Node)textItemDescList.item(0)).getNodeValue().trim();
                     
            		 //-------
@@ -159,14 +162,16 @@ public class MapItem extends Item implements Serializable {
                     Element itemartElement = (Element)itemArtList.item(0);
 
                     NodeList textItemArtList =  itemartElement.getChildNodes();
-                    Game.logMessage("	Item : Art : " + ((Node)textItemArtList.item(0)).getNodeValue().trim());
+                    if (Game.isDebug())
+        	        	Game.logMessage("	Item : Art : " + ((Node)textItemArtList.item(0)).getNodeValue().trim());
                     String itemArt = ((Node)textItemArtList.item(0)).getNodeValue().trim();
 
                     
                     //----
                     NodeList synList = firstItemElement.getElementsByTagName("synonym");
 		            int totalSyns = synList.getLength();
-		            Game.logMessage("Number of synonyms read: " + totalSyns);
+		            if (Game.isDebug())
+        	        	Game.logMessage("Number of synonyms read: " + totalSyns);
                     
 		            List<String> newSyns = new ArrayList<String>();
 		            
@@ -175,7 +180,8 @@ public class MapItem extends Item implements Serializable {
                 		{
 	                    	Element synElement = (Element)synList.item(l);
 	                    	NodeList childSynList = synElement.getChildNodes();
-	                    	Game.logMessage("	item : Synonym : " + ((Node)childSynList.item(0)).getNodeValue().trim());
+	                    	if (Game.isDebug())
+	            	        	Game.logMessage("	item : Synonym : " + ((Node)childSynList.item(0)).getNodeValue().trim());
 		                    newSyns.add(((Node)childSynList.item(0)).getNodeValue().trim());
                 		}
                     }
@@ -183,7 +189,8 @@ public class MapItem extends Item implements Serializable {
                     //----
                     NodeList targetList = firstItemElement.getElementsByTagName("target");
 		            int totalTargets = targetList.getLength();
-		            Game.logMessage("Number of targets read: " + totalTargets);
+		            if (Game.isDebug())
+        	        	Game.logMessage("Number of targets read: " + totalTargets);
                     
 		            String[] newTargets = new String[targetList.getLength()];
 		            
@@ -192,7 +199,8 @@ public class MapItem extends Item implements Serializable {
                 		{
 	                    	Element TargetElement = (Element)targetList.item(l);
 	                    	NodeList childTargetList = TargetElement.getChildNodes();
-	                    	Game.logMessage("	item : Target : " + ((Node)childTargetList.item(0)).getNodeValue().trim());
+	                    	if (Game.isDebug())
+	            	        	Game.logMessage("	item : Target : " + ((Node)childTargetList.item(0)).getNodeValue().trim());
 		                    newTargets[l] = ((Node)childTargetList.item(0)).getNodeValue().trim();
                 		}
                     }
